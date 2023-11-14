@@ -1,9 +1,6 @@
 package org.example.repository.impl;
 
-import org.example.controller.mapper.StudentDtoMapper;
 import org.example.db.ConnectionManagerImpl;
-import org.example.controller.dto.StudentIncomingDto;
-import org.example.controller.dto.StudentOutgoingDto;
 import org.example.model.Student;
 import org.example.repository.StudentRepo;
 

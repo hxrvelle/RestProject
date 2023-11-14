@@ -3,6 +3,7 @@ package org.example.controller;
 import com.google.gson.Gson;
 import org.example.controller.dto.StudentIncomingDto;
 import org.example.controller.dto.StudentOutgoingDto;
+import org.example.model.Student;
 import org.example.repository.impl.StudentRepoImpl;
 import org.example.service.impl.StudentServiceImpl;
 
@@ -94,7 +95,60 @@ public class StudentController extends HttpServlet {
             student.setGroup(group);
             student.setDate(Date.valueOf(date));
         }
-
         service.createStudent(student);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String[] path = req.getPathInfo().split("/");
+        int id;
+
+        if (path.length > 1) {
+            id = Integer.parseInt(path[1]);
+
+            if (service.getStudentById(id).getId() == 0) {
+                errorResponse(resp, 400, "No student with this ID");
+            } else {
+                String surname = req.getParameter("surname");
+                String name = req.getParameter("name");
+                String group = req.getParameter("group");
+                String date = req.getParameter("date");
+
+                if (surname == null) surname = service.getStudentById(id).getSurname();
+                if (name == null) name = service.getStudentById(id).getName();
+                if (group == null) group = service.getStudentById(id).getGroup();
+                if (date == null) date = String.valueOf(service.getStudentById(id).getDate());
+
+                StudentIncomingDto student = new StudentIncomingDto();
+                student.setSurname(surname);
+                student.setName(name);
+                student.setGroup(group);
+                student.setDate(Date.valueOf(date));
+
+                successResponse(resp, 201);
+                service.modifyStudent(id, student);
+            }
+        } else {
+            errorResponse(resp, 400, "No student ID provided");
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    }
+
+    private void errorResponse(HttpServletResponse resp, int status, String message) throws IOException {
+        resp.setStatus(status);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        resp.getWriter().write(message);
+    }
+
+    private void successResponse(HttpServletResponse resp, int status) {
+        resp.setStatus(status);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
     }
 }
