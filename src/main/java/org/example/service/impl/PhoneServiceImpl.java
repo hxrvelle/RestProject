@@ -3,16 +3,13 @@ package org.example.service.impl;
 import org.example.controller.dto.PhoneIncomingDto;
 import org.example.controller.dto.PhoneOutgoingDto;
 import org.example.controller.mapper.PhoneDtoMapper;
-import org.example.controller.mapper.StudentDtoMapper;
 import org.example.model.Phone;
-import org.example.model.Student;
 import org.example.repository.impl.PhoneRepoImpl;
 import org.example.repository.impl.StudentRepoImpl;
 import org.example.service.PhoneService;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PhoneServiceImpl implements PhoneService {
@@ -36,8 +33,13 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public void deleteStudentPhone(int id) {
+    public void updateStudentPhone(int id, String phoneNumber) {
+        phoneRepo.updateStudentPhone(id, phoneNumber);
+    }
 
+    @Override
+    public void deleteStudentPhone(int id) {
+        phoneRepo.deleteStudentPhone(id);
     }
 
     @Override
@@ -48,11 +50,11 @@ public class PhoneServiceImpl implements PhoneService {
         if (path.length > 1) {
             id = Integer.parseInt(path[1]);
 
-            List<Phone> phones = phoneRepo.getStudentPhones(id);
-            if (phones.size() == 0) {
-                status = "1";
-            } else {
-                status = "2";
+            if (studentRepo.getStudentById(id).getId() == 0) status = "1";
+            else {
+                List<Phone> phones = phoneRepo.getStudentPhones(id);
+                if (phones.size() == 0) status = "2";
+                else status = "3";
             }
         } else {
             status = "0";
@@ -62,31 +64,64 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Override
     public String addStudentPhoneCheck(String[] path, String phoneNumber) throws SQLException, IOException, ClassNotFoundException {
-        String status = "";
+        String status;
 
         int id;
         if (path.length > 1) {
             id = Integer.parseInt(path[1]);
 
-            if (studentRepo.getStudentById(id).getId() == 0) status = "1"; //no student with this id
-            if (phoneNumber == null) status = "2"; //no number provided
+            if (studentRepo.getStudentById(id).getId() == 0) status = "1";
+            else if (phoneNumber == null) status = "2";
             else {
                 PhoneIncomingDto phone = new PhoneIncomingDto();
                 phone.setPhoneNumber(phoneNumber);
                 phone.setStudentId(id);
 
                 addStudentPhone(phone);
-                status = "2";
+                status = "3";
             }
         } else {
-            status = "0"; //no id provided
+            status = "0";
         }
 
         return status;
     }
 
     @Override
+    public String updateStudentPhoneCheck(String[] path, String phoneNumber) {
+        String status;
+        int id;
+        if (path.length > 1) {
+            id = Integer.parseInt(path[1]);
+
+            if (phoneRepo.getPhoneById(id).getId() == 0) status = "0";
+            else if (phoneNumber == null) status = "1";
+            else {
+                updateStudentPhone(id, phoneNumber);
+                status = "2";
+            }
+        } else {
+            status = "3";
+        }
+        return status;
+    }
+
+    @Override
     public String deleteStudentPhoneCheck(String[] path) {
-        return null;
+        String status;
+
+        int id;
+        if (path.length > 1) {
+            id = Integer.parseInt(path[1]);
+
+            if (phoneRepo.getPhoneById(id).getId() == 0) status = "1"; //no phone number with this id
+            else {
+                deleteStudentPhone(id);
+                status = "2";
+            }
+        } else {
+            status = "0";
+        }
+        return status;
     }
 }

@@ -23,11 +23,12 @@ public class PhoneController extends HttpServlet {
 
         String status = service.getStudentPhonesCheck(path);
         if (status.equals("0")) errorResponse(resp, 400, "No student ID provided");
-        if (status.equals("1")) {
+        if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
+        if (status.equals("2")) {
             successResponse(resp, 200);
             resp.getWriter().write("No phone numbers for this student");
         }
-        if (status.equals("2")) {
+        if (status.equals("3")) {
             successResponse(resp, 200);
             int id = Integer.parseInt(path[1]);
             resp.getWriter().write(gson.toJson(service.getStudentPhones(id)));
@@ -39,15 +40,39 @@ public class PhoneController extends HttpServlet {
         String[] path = req.getPathInfo().split("/");
         String phoneNumber = req.getParameter("number");
 
-        String status = "";
+        String status;
         try {
             status = service.addStudentPhoneCheck(path, phoneNumber);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         if (status.equals("0")) errorResponse(resp, 400, "No student ID provided");
+        if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
+        if (status.equals("2")) errorResponse(resp, 400, "No phone number provided");
+        if (status.equals("3")) successResponse(resp, 201);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String[] path = req.getPathInfo().split("/");
+        String phoneNumber = req.getParameter("number");
+
+        String status = service.updateStudentPhoneCheck(path, phoneNumber);
+        if (status.equals("0")) errorResponse(resp, 400, "Phone number with this ID doesn't exist");
         if (status.equals("1")) errorResponse(resp, 400, "No phone number provided");
-        if (status.equals("2")) successResponse(resp, 201);
+        if (status.equals("2")) successResponse(resp, 200);
+        if (status.equals("3")) errorResponse(resp, 400, "No phone number ID provided");
+
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String[] path = req.getPathInfo().split("/");
+
+        String status = service.deleteStudentPhoneCheck(path);
+        if (status.equals("0")) errorResponse(resp, 400, "No phone number ID provided");
+        if (status.equals("1")) errorResponse(resp, 400, "Phone number with this ID doesn't exist");
+        if (status.equals("2")) successResponse(resp, 200);
     }
 
     private void errorResponse(HttpServletResponse resp, int status, String message) throws IOException {

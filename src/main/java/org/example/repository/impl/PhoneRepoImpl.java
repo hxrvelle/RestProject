@@ -15,6 +15,24 @@ public class PhoneRepoImpl implements PhoneRepo {
     private String query;
 
     @Override
+    public Phone getPhoneById(int id) {
+        Phone phone = new Phone();
+
+        query = "SELECT * FROM students.phone WHERE id ='" + id + "';";
+        try {
+            ResultSet rs = connectionManager.connect(query);
+            while (rs.next()) {
+                phone.setId(rs.getInt("id"));
+                phone.setPhoneNumber(rs.getString("phone"));
+                phone.setStudentId(rs.getInt("id_student"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return phone;
+    }
+
+    @Override
     public List<Phone> getStudentPhones(int id) {
         List<Phone> studentPhones = new ArrayList<>();
 
@@ -47,7 +65,22 @@ public class PhoneRepoImpl implements PhoneRepo {
     }
 
     @Override
-    public void deleteStudentPhone(int id) {
+    public void updateStudentPhone(int id, String phoneNumber) {
+        query = "UPDATE `students`.`phone` SET `phone` = '" + phoneNumber + "' WHERE (`id` ='" + id + "');";
+        try {
+            connectionManager.updateConnect(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public void deleteStudentPhone(int id) {
+        query = "DELETE FROM `students`.`phone` WHERE (`id` = '" + id + "');";
+        try {
+            connectionManager.voidConnect(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
