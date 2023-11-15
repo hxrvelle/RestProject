@@ -25,41 +25,19 @@ public class StudentController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
-        int id;
-        if (path.length > 1) {
-            id = Integer.parseInt(path[1]);
 
-            StudentOutgoingDto student = service.getStudentById(id);
+        String status = service.getStudentsCheck(path);
 
-            if (student.getId() == 0) {
-                resp.setStatus(400);
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-
-                resp.getWriter().write("No student with such ID");
-            } else {
-                resp.setStatus(200);
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-
-                resp.getWriter().write(gson.toJson(student));
-            }
-        } else {
-            List<StudentOutgoingDto> students = service.getAllActiveStudents();
-
-            if (students.size() == 0) {
-                resp.setStatus(400);
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-
-                resp.getWriter().write("There's no existing students");
-            } else {
-                resp.setStatus(200);
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-
-                resp.getWriter().write(gson.toJson(students));
-            }
+        if (status.equals("0")) errorResponse(resp, 400, "No student with such ID");
+        if (status.equals("1")) {
+            successResponse(resp, 200);
+            int id = Integer.parseInt(path[1]);
+            resp.getWriter().write(gson.toJson(service.getStudentById(id)));
+        }
+        if (status.equals("3")) errorResponse(resp, 400, "There's no existing students");
+        if (status.equals("4")) {
+            successResponse(resp, 200);
+            resp.getWriter().write(gson.toJson(service.getAllActiveStudents()));
         }
     }
 
@@ -70,72 +48,39 @@ public class StudentController extends HttpServlet {
         String group = req.getParameter("group");
         String date = req.getParameter("date");
 
-        String[] dateParts = date.split("-");
-        String year = dateParts[0];
-        String month = dateParts[1];
-        String day = dateParts[2];
+        String status = service.createStudentCheck(surname, name, group, date);
 
-        StudentIncomingDto student = new StudentIncomingDto();
-
-        if (surname == null || name == null || group == null || date == null) {
-            resp.setStatus(400);
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
-
-            resp.getWriter().write("One or more parameter is missing. Required parameters: surname, name, group, date");
-        } else if (year.length() != 4 || month.length() < 1 || month.length() > 2 || day.length() < 1 || day.length() > 2) {
-            resp.setStatus(400);
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
-
-            resp.getWriter().write("Wrong date format. Expected format: yyyy-mm-dd");
-        } else {
-            student.setSurname(surname);
-            student.setName(name);
-            student.setGroup(group);
-            student.setDate(Date.valueOf(date));
-        }
-        service.createStudent(student);
+        if (status.equals("0")) errorResponse(resp, 400, "One or more parameter is missing. Required parameters: surname, name, group, date");
+        if (status.equals("1")) errorResponse(resp, 400, "Wrong date format. Expected format: yyyy-mm-dd");
+        if (status.equals("2")) successResponse(resp, 200);
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
-        int id;
 
-        if (path.length > 1) {
-            id = Integer.parseInt(path[1]);
+        String checkId = service.updateStudentCheckId(path);
+        if (checkId.equals("0")) errorResponse(resp, 400, "No student ID provided");
+        else {
+            String surname = req.getParameter("surname");
+            String name = req.getParameter("name");
+            String group = req.getParameter("group");
+            String date = req.getParameter("date");
 
-            if (service.getStudentById(id).getId() == 0) {
-                errorResponse(resp, 400, "No student with this ID");
-            } else {
-                String surname = req.getParameter("surname");
-                String name = req.getParameter("name");
-                String group = req.getParameter("group");
-                String date = req.getParameter("date");
-
-                if (surname == null) surname = service.getStudentById(id).getSurname();
-                if (name == null) name = service.getStudentById(id).getName();
-                if (group == null) group = service.getStudentById(id).getGroup();
-                if (date == null) date = String.valueOf(service.getStudentById(id).getDate());
-
-                StudentIncomingDto student = new StudentIncomingDto();
-                student.setSurname(surname);
-                student.setName(name);
-                student.setGroup(group);
-                student.setDate(Date.valueOf(date));
-
-                successResponse(resp, 201);
-                service.modifyStudent(id, student);
-            }
-        } else {
-            errorResponse(resp, 400, "No student ID provided");
+            String status = service.updateStudentCheck(path, surname, name, group, date);
+            if (status.equals("0")) errorResponse(resp, 400, "No student with this ID");
+            if (status.equals("1")) successResponse(resp, 200);
         }
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String[] path = req.getPathInfo().split("/");
 
+        String status = service.deleteStudentCheck(path);
+        if (status.equals("0")) errorResponse(resp, 400, "No student ID provided");
+        if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
+        if (status.equals("2")) successResponse(resp, 200);
     }
 
     private void errorResponse(HttpServletResponse resp, int status, String message) throws IOException {

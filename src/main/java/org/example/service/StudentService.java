@@ -10,13 +10,21 @@ import java.util.List;
 
 public interface StudentService {
 
-    public List<StudentOutgoingDto> getAllActiveStudents();
+    List<StudentOutgoingDto> getAllActiveStudents();
 
-    public StudentOutgoingDto getStudentById(int id);
+    StudentOutgoingDto getStudentById(int id);
 
-    public void createStudent(StudentIncomingDto studentDto);
+    void createStudent(StudentIncomingDto studentDto);
 
-    public void modifyStudent(int id, StudentIncomingDto studentDto);
+    void modifyStudent(int id, StudentIncomingDto studentDto);
 
-    public void deleteStudent(int id);
+    void deleteStudent(int id);
+
+    /**Logical check methods */
+    String getStudentsCheck(String[] path);
+    String createStudentCheck(String surname, String name, String group, String date);
+    String updateStudentCheckId(String[] path);
+    String updateStudentCheck(String[] path, String surname, String name, String group, String date);
+    String deleteStudentCheck(String[] path);
+
 }
