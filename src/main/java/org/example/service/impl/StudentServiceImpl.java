@@ -1,13 +1,17 @@
 package org.example.service.impl;
 
+import org.example.controller.dto.PhoneOutgoingDto;
 import org.example.controller.dto.StudentIncomingDto;
 import org.example.controller.dto.StudentOutgoingDto;
+import org.example.controller.mapper.PhoneDtoMapper;
 import org.example.controller.mapper.StudentDtoMapper;
+import org.example.model.Phone;
 import org.example.model.Student;
 import org.example.repository.impl.StudentRepoImpl;
 import org.example.service.StudentService;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentServiceImpl implements StudentService {
@@ -20,13 +24,35 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentOutgoingDto> getAllActiveStudents() {
         List<Student> students = studentRepoImpl.getAllActiveStudents();
-        return StudentDtoMapper.INSTANCE.mapToDtoList(students);
+
+        List<StudentOutgoingDto> studentDtos = new ArrayList<>();
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+
+            ArrayList<Phone> phoneNumbers = student.getPhoneNumbers();
+            ArrayList<PhoneOutgoingDto> phoneDtos = (ArrayList<PhoneOutgoingDto>) PhoneDtoMapper.INSTANCE.mapToDtoList(phoneNumbers);
+
+            StudentOutgoingDto studentDto = StudentDtoMapper.INSTANCE.mapToDto(student);
+            studentDto.setPhoneNumbers(phoneDtos);
+
+            studentDtos.add(studentDto);
+        }
+
+        return studentDtos;
     }
 
     @Override
     public StudentOutgoingDto getStudentById(int id) {
         Student student = studentRepoImpl.getStudentById(id);
-        return StudentDtoMapper.INSTANCE.mapToDto(student);
+
+        ArrayList<Phone> phoneNumbers = student.getPhoneNumbers();
+        ArrayList<PhoneOutgoingDto> phoneDtos = (ArrayList<PhoneOutgoingDto>) PhoneDtoMapper.INSTANCE.mapToDtoList(phoneNumbers);
+
+        StudentOutgoingDto studentDto = StudentDtoMapper.INSTANCE.mapToDto(student);
+        studentDto.setPhoneNumbers(phoneDtos);
+
+        return studentDto;
     }
 
     @Override
@@ -74,6 +100,7 @@ public class StudentServiceImpl implements StudentService {
         return status;
     }
 
+    @Override
     public String createStudentCheck(String surname, String name, String group, String date) {
         String status;
 
@@ -101,6 +128,7 @@ public class StudentServiceImpl implements StudentService {
         return status;
     }
 
+    @Override
     public String updateStudentCheckId(String[] path) {
         String status = "";
         if (path.length < 1) {
@@ -109,6 +137,7 @@ public class StudentServiceImpl implements StudentService {
         return status;
     }
 
+    @Override
     public String updateStudentCheck(String[] path, String surname, String name, String group, String date) {
         String status = "";
 
@@ -134,6 +163,7 @@ public class StudentServiceImpl implements StudentService {
         return status;
     }
 
+    @Override
     public String deleteStudentCheck(String[] path) {
         String status;
 

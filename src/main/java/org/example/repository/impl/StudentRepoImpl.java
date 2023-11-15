@@ -1,6 +1,7 @@
 package org.example.repository.impl;
 
 import org.example.db.ConnectionManagerImpl;
+import org.example.model.Phone;
 import org.example.model.Student;
 import org.example.repository.StudentRepo;
 
@@ -16,21 +17,44 @@ public class StudentRepoImpl implements StudentRepo {
     public List<Student> getAllActiveStudents() {
         List<Student> students = new ArrayList<>();
 
-        query = "SELECT * FROM student WHERE status = 1;";
+        query = "SELECT * FROM student LEFT JOIN phone ON phone.id_student = student.id WHERE student.status = 1;";
 
         try {
             ResultSet rs = connectionManager.connect(query);
             while (rs.next()) {
-                Student student = new Student();
+                int studentId = rs.getInt("id");
+                boolean studentExists = false;
 
-                student.setId(rs.getInt("id"));
-                student.setSurname(rs.getString("surname"));
-                student.setName(rs.getString("name"));
-                student.setGroup(rs.getString("group"));
-                student.setDate(rs.getDate("date"));
-                student.setStatus(1);
+                for (Student student : students) {
+                    if (student.getId() == studentId) {
+                        studentExists = true;
 
-                students.add(student);
+                        Phone phone = new Phone();
+                        phone.setId(rs.getInt("phone.id"));
+                        phone.setPhoneNumber(rs.getString("phone"));
+                        student.getPhoneNumbers().add(phone);
+                        break;
+                    }
+                }
+
+                if (!studentExists) {
+                    Student student = new Student();
+                    student.setId(studentId);
+                    student.setSurname(rs.getString("surname"));
+                    student.setName(rs.getString("name"));
+                    student.setGroup(rs.getString("group"));
+                    student.setDate(rs.getDate("date"));
+                    student.setStatus(1);
+
+                    ArrayList<Phone> phoneNumbers = new ArrayList<>();
+                    Phone phone = new Phone();
+                    phone.setId(rs.getInt("phone.id"));
+                    phone.setPhoneNumber(rs.getString("phone"));
+                    phoneNumbers.add(phone);
+
+                    student.setPhoneNumbers(phoneNumbers);
+                    students.add(student);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,8 +65,9 @@ public class StudentRepoImpl implements StudentRepo {
     @Override
     public Student getStudentById(int id) {
         Student student = new Student();
+        ArrayList<Phone> phoneNumbers = new ArrayList<>();
 
-        query = "SELECT * FROM student WHERE id ='" + id + "';";
+        query = "SELECT * FROM student LEFT JOIN phone ON phone.id_student = student.id WHERE student.id ='" + id + "';";
 
         try {
             ResultSet rs = connectionManager.connect(query);
@@ -53,11 +78,17 @@ public class StudentRepoImpl implements StudentRepo {
                 student.setGroup(rs.getString("group"));
                 student.setDate(rs.getDate("date"));
                 student.setStatus(1);
+
+                Phone phone = new Phone();
+                phone.setId(rs.getInt("phone.id"));
+                phone.setPhoneNumber(rs.getString("phone"));
+                phoneNumbers.add(phone);
+
+                student.setPhoneNumbers(phoneNumbers);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return student;
     }
 

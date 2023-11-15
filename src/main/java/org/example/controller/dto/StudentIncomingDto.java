@@ -1,6 +1,9 @@
 package org.example.controller.dto;
 
+import org.example.model.Phone;
+
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class StudentIncomingDto {
     private String surname;
@@ -8,16 +11,18 @@ public class StudentIncomingDto {
     private String group;
     private Date date;
     private int status;
+    private ArrayList<PhoneIncomingDto> phoneNumbers;
 
     public StudentIncomingDto() {
     }
 
-    public StudentIncomingDto(String surname, String name, String group, Date date, int status) {
+    public StudentIncomingDto(String surname, String name, String group, Date date, int status, ArrayList<PhoneIncomingDto> phoneNumbers) {
         this.surname = surname;
         this.name = name;
         this.group = group;
         this.date = date;
         this.status = status;
+        this.phoneNumbers = phoneNumbers;
     }
 
     public String getSurname() {
@@ -60,6 +65,14 @@ public class StudentIncomingDto {
         this.status = status;
     }
 
+    public ArrayList<PhoneIncomingDto> getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
+    public void setPhoneNumbers(ArrayList<PhoneIncomingDto> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
+    }
+
     @Override
     public String toString() {
         return "StudentIncomingDTO{" +
@@ -68,6 +81,7 @@ public class StudentIncomingDto {
                 ", group='" + group + '\'' +
                 ", date=" + date +
                 ", status=" + status +
+                ", phoneNumbers=" + phoneNumbers +
                 '}';
     }
 }

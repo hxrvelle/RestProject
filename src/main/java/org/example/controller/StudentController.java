@@ -1,20 +1,14 @@
 package org.example.controller;
 
 import com.google.gson.Gson;
-import org.example.controller.dto.StudentIncomingDto;
-import org.example.controller.dto.StudentOutgoingDto;
-import org.example.model.Student;
 import org.example.repository.impl.StudentRepoImpl;
 import org.example.service.impl.StudentServiceImpl;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Date;
-import java.util.List;
 
 @WebServlet(name = "StudentController", urlPatterns = "/students/*")
 public class StudentController extends HttpServlet {
@@ -34,8 +28,8 @@ public class StudentController extends HttpServlet {
             int id = Integer.parseInt(path[1]);
             resp.getWriter().write(gson.toJson(service.getStudentById(id)));
         }
-        if (status.equals("3")) errorResponse(resp, 400, "There's no existing students");
-        if (status.equals("4")) {
+        if (status.equals("2")) errorResponse(resp, 400, "There's no existing students");
+        if (status.equals("3")) {
             successResponse(resp, 200);
             resp.getWriter().write(gson.toJson(service.getAllActiveStudents()));
         }

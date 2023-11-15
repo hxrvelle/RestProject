@@ -5,9 +5,9 @@ import org.example.model.Student;
 import java.util.List;
 
 public interface StudentRepo {
-    public List<Student> getAllActiveStudents();
-    public Student getStudentById(int id);
-    public void createStudent(Student student);
-    public void modifyStudent(int id, Student student);
-    public void deleteStudent(int id);
+    List<Student> getAllActiveStudents();
+    Student getStudentById(int id);
+    void createStudent(Student student);
+    void modifyStudent(int id, Student student);
+    void deleteStudent(int id);
 }

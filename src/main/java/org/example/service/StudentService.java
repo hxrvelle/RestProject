@@ -9,15 +9,11 @@ import org.example.repository.impl.StudentRepoImpl;
 import java.util.List;
 
 public interface StudentService {
-
+    /**Methods for forwarding requests from controller to database*/
     List<StudentOutgoingDto> getAllActiveStudents();
-
     StudentOutgoingDto getStudentById(int id);
-
     void createStudent(StudentIncomingDto studentDto);
-
     void modifyStudent(int id, StudentIncomingDto studentDto);
-
     void deleteStudent(int id);
 
     /**Logical check methods */

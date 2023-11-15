@@ -1,6 +1,7 @@
 package org.example.model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Student {
@@ -10,17 +11,19 @@ public class Student {
     private String group;
     private Date date;
     private int status;
+    private ArrayList<Phone> phoneNumbers;
 
     public Student() {
     }
 
-    public Student(int studentId, String surname, String name, String group, Date date, int status) {
+    public Student(int studentId, String surname, String name, String group, Date date, int status, ArrayList<Phone> phoneNumbers) {
         this.id = studentId;
         this.surname = surname;
         this.name = name;
         this.group = group;
         this.date = date;
         this.status = status;
+        this.phoneNumbers = phoneNumbers;
     }
 
     public int getId() {
@@ -71,6 +74,14 @@ public class Student {
         this.status = status;
     }
 
+    public ArrayList<Phone> getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
+    public void setPhoneNumbers(ArrayList<Phone> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,7 +94,8 @@ public class Student {
         if (!Objects.equals(surname, student.surname)) return false;
         if (!Objects.equals(name, student.name)) return false;
         if (!Objects.equals(group, student.group)) return false;
-        return Objects.equals(date, student.date);
+        if (!Objects.equals(date, student.date)) return false;
+        return Objects.equals(phoneNumbers, student.phoneNumbers);
     }
 
     @Override
@@ -94,18 +106,20 @@ public class Student {
         result = 31 * result + (group != null ? group.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + status;
+        result = 31 * result + (phoneNumbers != null ? phoneNumbers.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "Student{" +
-                "studentId=" + id +
+                "id=" + id +
                 ", surname='" + surname + '\'' +
                 ", name='" + name + '\'' +
                 ", group='" + group + '\'' +
                 ", date=" + date +
                 ", status=" + status +
+                ", phoneNumbers=" + phoneNumbers +
                 '}';
     }
 }
