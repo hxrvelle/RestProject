@@ -24,27 +24,28 @@ public class DisciplineController extends HttpServlet {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.getDisciplinesCheck(path);
-        if (status.equals("0")) error.diesciplineDoesntExist(resp);
-        if (status.equals("1")) {
+        if (status.equals("00")) error.diesciplineDoesntExist(resp);
+        if (status.equals("0")) {
             int id = Integer.parseInt(path[1]);
             success.successResponse(resp, 200);
             resp.getWriter().write(gson.toJson(service.getDisciplineById(id)));
         }
-        if (status.equals("2")) error.noDisciplines(resp);
-        if (status.equals("3")) {
-            success.successResponse(resp, 200);
-            resp.getWriter().write(gson.toJson(service.getAllActiveDisciplines()));
-        }
-        if (status.equals("4")) error.diesciplineDoesntExist(resp);
-        if (status.equals("5")) error.noTerms(resp);
-        if (status.equals("6")) {
+        if (status.equals("1")) error.invalidDisciplineId(resp);
+        if (status.equals("2")) error.noDisciplineId(resp);
+        if (status.equals("3")) error.diesciplineDoesntExist(resp);
+        if (status.equals("4")) error.noTerms(resp);
+        if (status.equals("5")) {
             int id = Integer.parseInt(path[1]);
             success.successResponse(resp, 200);
             resp.getWriter().write(gson.toJson(service.getDisciplineTerms(id)));
         }
-        if (status.equals("7")) error.noDisciplineId(resp);
-        if (status.equals("8")) error.invalidDisciplineId(resp);
-        if (status.equals("9")) error.invalidRequest(resp);
+        if (status.equals("6")) error.invalidRequest(resp);
+        if (status.equals("7")) error.invalidDisciplineId(resp);
+        if (status.equals("8")) error.noDisciplines(resp);
+        if (status.equals("9")) {
+            success.successResponse(resp, 200);
+            resp.getWriter().write(gson.toJson(service.getAllActiveDisciplines()));
+        }
     }
 
     @Override
