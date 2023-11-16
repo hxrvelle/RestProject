@@ -33,6 +33,7 @@ public class StudentController extends HttpServlet {
             successResponse(resp, 200);
             resp.getWriter().write(gson.toJson(service.getAllActiveStudents()));
         }
+        if (status.equals("4")) errorResponse(resp, 400, "Invalid student ID. Should be a type of number");
     }
 
     @Override
@@ -62,6 +63,7 @@ public class StudentController extends HttpServlet {
         if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
         if (status.equals("2")) successResponse(resp, 200);
         if (status.equals("3")) errorResponse(resp, 400, "No parameters provided, no changes been made");
+        if (status.equals("4")) errorResponse(resp, 400, "Invalid student ID. Should be a type of number");
     }
 
     @Override
@@ -72,6 +74,7 @@ public class StudentController extends HttpServlet {
         if (status.equals("0")) errorResponse(resp, 400, "No student ID provided");
         if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
         if (status.equals("2")) successResponse(resp, 200);
+        if (status.equals("3")) errorResponse(resp, 400, "Invalid student ID. Should be a type of number");
     }
 
     private void errorResponse(HttpServletResponse resp, int status, String message) throws IOException {

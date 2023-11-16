@@ -41,6 +41,8 @@ public class DisciplineController extends HttpServlet {
             resp.getWriter().write(gson.toJson(service.getDisciplineTerms(id)));
         }
         if (status.equals("7")) errorResponse(resp, 400, "No discipline ID provided");
+        if (status.equals("8")) errorResponse(resp, 400, "Invalid discipline ID. Should be a type of number");
+        if (status.equals("9")) errorResponse(resp, 400, "Invalid request");
     }
 
     @Override
@@ -62,6 +64,7 @@ public class DisciplineController extends HttpServlet {
         if (status.equals("1")) errorResponse(resp, 400, "No discipline with this ID");
         if (status.equals("2")) successResponse(resp, 200);
         if (status.equals("3")) errorResponse(resp, 400, "No discipline name provided");
+        if (status.equals("4")) errorResponse(resp, 400, "Invalid discipline ID. Should be a type of number");
     }
 
     @Override
@@ -72,6 +75,7 @@ public class DisciplineController extends HttpServlet {
         if (status.equals("0")) errorResponse(resp, 400, "No discipline ID provided");
         if (status.equals("1")) errorResponse(resp, 400, "No discipline with this ID");
         if (status.equals("2")) successResponse(resp, 200);
+        if (status.equals("3")) errorResponse(resp, 400, "Invalid discipline ID. Should be a type of number");
     }
 
     private void errorResponse(HttpServletResponse resp, int status, String message) throws IOException {

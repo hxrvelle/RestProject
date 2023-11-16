@@ -86,17 +86,22 @@ public class DisciplineServiceImpl implements DisciplineService {
         if (path.length == 2 && path[1].equals("terms")) {
             status = "7";
         }
-        else if (path.length == 2) {
+        else if (path.length == 2 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
             if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "0";
             else status = "1";
+        }
+        else if (path.length >= 2 && (!path[1].matches("\\d+"))) {
+            status = "8";
         }
         else if (path.length > 2 && path[2].equals("terms")) {
             id = Integer.parseInt(path[1]);
             if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "4";
             else if (getDisciplineTerms(id).size() == 0) status = "5";
             else status = "6";
+        } else if (path.length > 2 && (!path[2].equals("terms"))) {
+            status = "9";
         } else {
             List<Discipline> disciplines = disciplineRepo.getAllActiveDisciplines();
             if (disciplines.size() == 0) status = "2";
@@ -123,7 +128,7 @@ public class DisciplineServiceImpl implements DisciplineService {
     public String modifyDisciplineCheck(String[] path, String discipline) {
         String status;
         int id;
-        if (path.length == 2) {
+        if (path.length == 2  && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
             if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "1";
             else {
@@ -134,6 +139,8 @@ public class DisciplineServiceImpl implements DisciplineService {
                     status = "2";
                 } else status = "3";
             }
+        } else if (path.length == 2  && (!path[1].matches("\\d+"))) {
+            status = "4";
         } else {
             status = "0";
         }
@@ -146,13 +153,15 @@ public class DisciplineServiceImpl implements DisciplineService {
         String status;
 
         if (path.length < 1) status = "0";
-        else {
+        else if (path.length == 2  && path[1].matches("\\d+")) {
             int id = Integer.parseInt(path[1]);
             if (getDisciplineById(id).getId() == 0) status = "1";
             else {
                 deleteDiscipline(id);
                 status = "2";
             }
+        } else {
+            status = "3";
         }
         return status;
     }

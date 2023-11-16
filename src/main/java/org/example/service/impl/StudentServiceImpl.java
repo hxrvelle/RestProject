@@ -76,13 +76,15 @@ public class StudentServiceImpl implements StudentService {
     public String getStudentsCheck(String[] path) {
         String status;
         int id;
-        if (path.length > 1) {
+        if (path.length > 1 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
             Student student = studentRepoImpl.getStudentById(id);
 
             if (student.getId() == 0) status = "0";
             else status = "1";
+        } else if (path.length > 1 && (!path[1].matches("\\d+"))) {
+            status = "4";
         } else {
             List<Student> students = studentRepoImpl.getAllActiveStudents();
 
@@ -125,6 +127,8 @@ public class StudentServiceImpl implements StudentService {
         String status;
         if (path.length < 1) {
             status = "0";
+        } else if (path.length > 1 && (!path[1].matches("\\d+"))) {
+            status = "4";
         } else {
             int id = Integer.parseInt(path[1]);
             if (getStudentById(id).getId() == 0) {
@@ -156,6 +160,9 @@ public class StudentServiceImpl implements StudentService {
         String status;
 
         if (path.length < 1) status = "0";
+        else if (path.length > 1 && (!path[1].matches("\\d+"))) {
+            status = "3";
+        }
         else {
             int id = Integer.parseInt(path[1]);
             if (getStudentById(id).getId() == 0) status = "1";

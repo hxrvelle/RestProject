@@ -48,7 +48,7 @@ public class PhoneServiceImpl implements PhoneService {
         String status;
 
         int id;
-        if (path.length > 1) {
+        if (path.length > 1 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
             if (studentRepo.getStudentById(id).getId() == 0) status = "1";
@@ -57,7 +57,11 @@ public class PhoneServiceImpl implements PhoneService {
                 if (phones.size() == 0) status = "2";
                 else status = "3";
             }
-        } else {
+        }
+        else if (path.length > 1 && (!path[1].matches("\\d+"))) {
+            status = "4";
+        }
+        else {
             status = "0";
         }
         return status;
@@ -68,7 +72,7 @@ public class PhoneServiceImpl implements PhoneService {
         String status;
 
         int id;
-        if (path.length > 1) {
+        if (path.length > 1 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
             if (studentRepo.getStudentById(id).getId() == 0) status = "1";
@@ -81,7 +85,11 @@ public class PhoneServiceImpl implements PhoneService {
                 addStudentPhone(phone);
                 status = "3";
             }
-        } else {
+        }
+        else if (path.length > 1 && (!path[1].matches("\\d+"))) {
+            status = "4";
+        }
+        else {
             status = "0";
         }
 
@@ -92,7 +100,7 @@ public class PhoneServiceImpl implements PhoneService {
     public String updateStudentPhoneCheck(String[] path, String phoneNumber) {
         String status;
         int id;
-        if (path.length > 1) {
+        if (path.length > 1 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
             if (phoneRepo.getPhoneById(id).getId() == 0) status = "0";
@@ -104,7 +112,11 @@ public class PhoneServiceImpl implements PhoneService {
                 updateStudentPhone(id, phone);
                 status = "2";
             }
-        } else {
+        }
+        else if (path.length > 1 && (!path[1].matches("\\d+"))) {
+            status = "4";
+        }
+        else {
             status = "3";
         }
         return status;
@@ -115,7 +127,7 @@ public class PhoneServiceImpl implements PhoneService {
         String status;
 
         int id;
-        if (path.length > 1) {
+        if (path.length > 1 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
             if (phoneRepo.getPhoneById(id).getId() == 0) status = "1"; //no phone number with this id
@@ -123,7 +135,11 @@ public class PhoneServiceImpl implements PhoneService {
                 deleteStudentPhone(id);
                 status = "2";
             }
-        } else {
+        }
+        else if (path.length > 1 && (!path[1].matches("\\d+"))) {
+            status = "3";
+        }
+        else {
             status = "0";
         }
         return status;
