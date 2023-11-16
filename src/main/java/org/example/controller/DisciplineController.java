@@ -18,7 +18,7 @@ public class DisciplineController extends HttpServlet {
     private final DisciplineRepoImpl disciplineRepo = new DisciplineRepoImpl();
     private final DisciplineServiceImpl service = new DisciplineServiceImpl(disciplineRepo);
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.getDisciplinesCheck(path);
@@ -33,6 +33,45 @@ public class DisciplineController extends HttpServlet {
             successResponse(resp, 200);
             resp.getWriter().write(gson.toJson(service.getAllActiveDisciplines()));
         }
+        if (status.equals("4")) errorResponse(resp, 400, "No discipline with this ID");
+        if (status.equals("5")) errorResponse(resp, 400, "No terms for this discipline");
+        if (status.equals("6")) {
+            int id = Integer.parseInt(path[1]);
+            successResponse(resp, 200);
+            resp.getWriter().write(gson.toJson(service.getDisciplineTerms(id)));
+        }
+        if (status.equals("7")) errorResponse(resp, 400, "No discipline ID provided");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String discipline = req.getParameter("discipline");
+
+        String status = service.createDisciplineCheck(discipline);
+        if (status.equals("0")) errorResponse(resp, 400, "No discipline name provided");
+        if (status.equals("1")) successResponse(resp, 201);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String[] path = req.getPathInfo().split("/");
+        String discipline = req.getParameter("discipline");
+
+        String status = service.modifyDisciplineCheck(path, discipline);
+        if (status.equals("0")) errorResponse(resp, 400, "No discipline ID provided");
+        if (status.equals("1")) errorResponse(resp, 400, "No discipline with this ID");
+        if (status.equals("2")) successResponse(resp, 200);
+        if (status.equals("3")) errorResponse(resp, 400, "No discipline name provided");
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String[] path = req.getPathInfo().split("/");
+
+        String status = service.deleteDisciplineCheck(path);
+        if (status.equals("0")) errorResponse(resp, 400, "No discipline ID provided");
+        if (status.equals("1")) errorResponse(resp, 400, "No discipline with this ID");
+        if (status.equals("2")) successResponse(resp, 200);
     }
 
     private void errorResponse(HttpServletResponse resp, int status, String message) throws IOException {

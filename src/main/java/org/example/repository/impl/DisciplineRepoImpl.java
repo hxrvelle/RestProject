@@ -16,7 +16,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     public List<Discipline> getAllActiveDisciplines() {
         List<Discipline> disciplines = new ArrayList<>();
 
-        query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline JOIN term_discipline ON discipline.id = term_discipline.id_discipline JOIN term ON term.id = term_discipline.id_term WHERE discipline.status = 1;";
+        query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline LEFT JOIN term_discipline ON discipline.id = term_discipline.id_discipline LEFT JOIN term ON term.id = term_discipline.id_term WHERE discipline.status = 1;";
 
         try {
             ResultSet rs = connectionManager.connect(query);
@@ -64,7 +64,24 @@ public class DisciplineRepoImpl implements DisciplineRepo {
 
     @Override
     public List<Term> getDisciplineTerms(int id) {
-        return null;
+        List<Term> terms = new ArrayList<>();
+        query = "SELECT term.* FROM students.term JOIN term_discipline on term_discipline.id_term = term.id JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE discipline.id ='" + id + "';";
+        try {
+            ResultSet rs = connectionManager.connect(query);
+            while (rs.next()) {
+                Term term = new Term();
+
+                term.setId(rs.getInt("id"));
+                term.setTerm(rs.getString("term"));
+                term.setDuration(rs.getString("duration"));
+                term.setStatus(rs.getInt("status"));
+
+                terms.add(term);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return terms;
     }
 
     @Override
@@ -72,7 +89,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         Discipline discipline = new Discipline();
         ArrayList<Term> terms = new ArrayList<>();
 
-        query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline JOIN term_discipline ON discipline.id = term_discipline.id_discipline JOIN term ON term.id = term_discipline.id_term WHERE discipline.id ='" + id + "';";
+        query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline LEFT JOIN term_discipline ON discipline.id = term_discipline.id_discipline LEFT JOIN term ON term.id = term_discipline.id_term WHERE discipline.id ='" + id + "';";
 
         try {
             ResultSet rs = connectionManager.connect(query);
@@ -97,17 +114,32 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     }
 
     @Override
-    public void createDiscipline(String discipline) {
-
+    public void createDiscipline(Discipline discipline) {
+        query = "INSERT INTO `discipline` (`discipline`) VALUES ('" + discipline.getDiscipline() + "');";
+        try {
+            connectionManager.updateConnect(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void modifyDiscipline(String discipline, int id) {
-
+    public void modifyDiscipline(Discipline discipline, int id) {
+        query = "UPDATE `students`.`discipline` SET `discipline` = '" + discipline.getDiscipline() + "' WHERE (`id` = '" + id + "');";
+        try {
+            connectionManager.updateConnect(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void deleteDiscipline(int id) {
-
+        query = "UPDATE `discipline` SET `status` = '0' WHERE (`id` ='" + id + "');";
+        try {
+            connectionManager.voidConnect(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

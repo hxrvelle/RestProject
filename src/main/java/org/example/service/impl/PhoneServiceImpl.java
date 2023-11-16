@@ -27,14 +27,15 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public void addStudentPhone(PhoneIncomingDto phoneDto) throws SQLException, IOException, ClassNotFoundException {
+    public void addStudentPhone(PhoneIncomingDto phoneDto) {
         Phone phone = PhoneDtoMapper.INSTANCE.mapToEntity(phoneDto);
         phoneRepo.addStudentPhone(phone);
     }
 
     @Override
-    public void updateStudentPhone(int id, String phoneNumber) {
-        phoneRepo.updateStudentPhone(id, phoneNumber);
+    public void updateStudentPhone(int id, PhoneIncomingDto phoneDto) {
+        Phone phone = PhoneDtoMapper.INSTANCE.mapToEntity(phoneDto);
+        phoneRepo.updateStudentPhone(id, phone);
     }
 
     @Override
@@ -97,7 +98,10 @@ public class PhoneServiceImpl implements PhoneService {
             if (phoneRepo.getPhoneById(id).getId() == 0) status = "0";
             else if (phoneNumber == null) status = "1";
             else {
-                updateStudentPhone(id, phoneNumber);
+                PhoneIncomingDto phone = new PhoneIncomingDto();
+                phone.setPhoneNumber(phoneNumber);
+
+                updateStudentPhone(id, phone);
                 status = "2";
             }
         } else {

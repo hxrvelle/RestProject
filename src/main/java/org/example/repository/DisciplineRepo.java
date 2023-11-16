@@ -12,9 +12,9 @@ public interface DisciplineRepo {
 
     Discipline getDisciplineById(int id);
 
-    void createDiscipline(String discipline);
+    void createDiscipline(Discipline discipline);
 
-    void modifyDiscipline(String discipline, int id);
+    void modifyDiscipline(Discipline discipline, int id);
 
     void deleteDiscipline(int id);
 }

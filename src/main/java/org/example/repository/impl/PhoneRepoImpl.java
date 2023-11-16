@@ -65,8 +65,8 @@ public class PhoneRepoImpl implements PhoneRepo {
     }
 
     @Override
-    public void updateStudentPhone(int id, String phoneNumber) {
-        query = "UPDATE `students`.`phone` SET `phone` = '" + phoneNumber + "' WHERE (`id` ='" + id + "');";
+    public void updateStudentPhone(int id, Phone phone) {
+        query = "UPDATE `students`.`phone` SET `phone` = '" + phone.getPhoneNumber() + "' WHERE (`id` ='" + id + "');";
         try {
             connectionManager.updateConnect(query);
         } catch (Exception e) {

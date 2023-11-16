@@ -1,12 +1,15 @@
 package org.example.service.impl;
 
+import org.example.controller.dto.DisciplineIncomingDto;
 import org.example.controller.dto.DisciplineOutgoingDto;
+import org.example.controller.dto.TermIncomingDto;
 import org.example.controller.dto.TermOutgoingDto;
 import org.example.controller.mapper.DisciplineDtoMapper;
 import org.example.controller.mapper.TermDtoMapper;
 import org.example.model.Discipline;
 import org.example.model.Term;
 import org.example.repository.impl.DisciplineRepoImpl;
+import org.example.repository.impl.TermRepoImpl;
 import org.example.service.DisciplineService;
 
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.List;
 
 public class DisciplineServiceImpl implements DisciplineService {
     private final DisciplineRepoImpl disciplineRepo;
+    private final TermRepoImpl termRepo = new TermRepoImpl();
 
     public DisciplineServiceImpl(DisciplineRepoImpl disciplineRepo) {
         this.disciplineRepo = disciplineRepo;
@@ -54,59 +58,102 @@ public class DisciplineServiceImpl implements DisciplineService {
 
     @Override
     public List<TermOutgoingDto> getDisciplineTerms(int id) {
-        return null;
+        List<Term> terms = disciplineRepo.getDisciplineTerms(id);
+        return TermDtoMapper.INSTANCE.mapToDtoList(terms);
     }
 
     @Override
-    public void createDiscipline(String discipline) {
-
+    public void createDiscipline(DisciplineIncomingDto disciplineDto) {
+        Discipline discipline = DisciplineDtoMapper.INSTANCE.mapToEntity(disciplineDto);
+        disciplineRepo.createDiscipline(discipline);
     }
 
     @Override
-    public void modifyDiscipline(String discipline, int id) {
-
+    public void modifyDiscipline(DisciplineIncomingDto disciplineDto, int id) {
+        Discipline discipline = DisciplineDtoMapper.INSTANCE.mapToEntity(disciplineDto);
+        disciplineRepo.modifyDiscipline(discipline, id);
     }
 
     @Override
     public void deleteDiscipline(int id) {
-
+        disciplineRepo.deleteDiscipline(id);
     }
 
     @Override
     public String getDisciplinesCheck(String[] path) {
         String status;
         int id;
-        if (path.length > 1) {
+        if (path.length == 2 && path[1].equals("terms")) {
+            status = "7";
+        }
+        else if (path.length == 2) {
             id = Integer.parseInt(path[1]);
 
-            Discipline discipline = disciplineRepo.getDisciplineById(id);
-            if (discipline.getId() == 0) status = "0";
+            if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "0";
             else status = "1";
+        }
+        else if (path.length > 2 && path[2].equals("terms")) {
+            id = Integer.parseInt(path[1]);
+            if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "4";
+            else if (getDisciplineTerms(id).size() == 0) status = "5";
+            else status = "6";
         } else {
             List<Discipline> disciplines = disciplineRepo.getAllActiveDisciplines();
-            if (disciplines.size() == 0) status = "2"; //no discipline
-            else status = "3"; //ok
+            if (disciplines.size() == 0) status = "2";
+            else status = "3";
         }
         return status;
     }
 
     @Override
-    public String getTermsCheck(String[] path) {
-        return null;
-    }
+    public String createDisciplineCheck(String disciplineName) {
+        String status;
 
-    @Override
-    public String createDisciplineCheck(String discipline) {
-        return null;
+        if (disciplineName != null && (!disciplineName.equals(""))) {
+            DisciplineIncomingDto discipline = new DisciplineIncomingDto();
+            discipline.setDiscipline(disciplineName);
+            createDiscipline(discipline);
+            status = "1";
+        }
+        else status = "0";
+        return status;
     }
 
     @Override
     public String modifyDisciplineCheck(String[] path, String discipline) {
-        return null;
+        String status;
+        int id;
+        if (path.length == 2) {
+            id = Integer.parseInt(path[1]);
+            if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "1";
+            else {
+                if (discipline != null && (!discipline.equals(""))) {
+                    DisciplineIncomingDto disciplineDto = new DisciplineIncomingDto();
+                    disciplineDto.setDiscipline(discipline);
+                    modifyDiscipline(disciplineDto, id);
+                    status = "2";
+                } else status = "3";
+            }
+        } else {
+            status = "0";
+        }
+
+        return status;
     }
 
     @Override
     public String deleteDisciplineCheck(String[] path) {
-        return null;
+        String status;
+
+        if (path.length < 1) status = "0";
+        else {
+            int id = Integer.parseInt(path[1]);
+            if (getDisciplineById(id).getId() == 0) status = "1";
+            else {
+                deleteDiscipline(id);
+                status = "2";
+            }
+        }
+        return status;
     }
 }

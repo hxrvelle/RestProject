@@ -11,7 +11,7 @@ import java.util.List;
 public interface PhoneService {
     List<PhoneOutgoingDto> getStudentPhones(int id);
     void addStudentPhone(PhoneIncomingDto phone) throws SQLException, IOException, ClassNotFoundException;
-    void updateStudentPhone(int id, String phoneNumber);
+    void updateStudentPhone(int id, PhoneIncomingDto phoneDto);
     void deleteStudentPhone(int id);
 
     String getStudentPhonesCheck(String[] path);
