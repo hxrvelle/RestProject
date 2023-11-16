@@ -68,7 +68,7 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public String addStudentPhoneCheck(String[] path, String phoneNumber) throws SQLException, IOException, ClassNotFoundException {
+    public String addStudentPhoneCheck(String[] path, String phoneNumber) {
         String status;
 
         int id;
@@ -130,7 +130,7 @@ public class PhoneServiceImpl implements PhoneService {
         if (path.length > 1 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
-            if (phoneRepo.getPhoneById(id).getId() == 0) status = "1"; //no phone number with this id
+            if (phoneRepo.getPhoneById(id).getId() == 0) status = "1";
             else {
                 deleteStudentPhone(id);
                 status = "2";

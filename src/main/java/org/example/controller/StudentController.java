@@ -1,6 +1,8 @@
 package org.example.controller;
 
 import com.google.gson.Gson;
+import org.example.controller.responseHandlers.StudentErrorResponses;
+import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.repository.impl.StudentRepoImpl;
 import org.example.service.impl.StudentServiceImpl;
 
@@ -15,6 +17,8 @@ public class StudentController extends HttpServlet {
     Gson gson = new Gson();
     private final StudentRepoImpl studentRepo = new StudentRepoImpl();
     private final StudentServiceImpl service = new StudentServiceImpl(studentRepo);
+    private final StudentErrorResponses error = new StudentErrorResponses();
+    private final SuccessResponse success = new SuccessResponse();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -22,18 +26,18 @@ public class StudentController extends HttpServlet {
 
         String status = service.getStudentsCheck(path);
 
-        if (status.equals("0")) errorResponse(resp, 400, "No student with such ID");
+        if (status.equals("0")) error.noStudentId(resp);
         if (status.equals("1")) {
-            successResponse(resp, 200);
+            success.successResponse(resp, 200);
             int id = Integer.parseInt(path[1]);
             resp.getWriter().write(gson.toJson(service.getStudentById(id)));
         }
-        if (status.equals("2")) errorResponse(resp, 400, "There's no existing students");
+        if (status.equals("2")) error.noStudents(resp);
         if (status.equals("3")) {
-            successResponse(resp, 200);
+            success.successResponse(resp, 200);
             resp.getWriter().write(gson.toJson(service.getAllActiveStudents()));
         }
-        if (status.equals("4")) errorResponse(resp, 400, "Invalid student ID. Should be a type of number");
+        if (status.equals("4")) error.invalidStudentId(resp);
     }
 
     @Override
@@ -45,9 +49,9 @@ public class StudentController extends HttpServlet {
 
         String status = service.createStudentCheck(surname, name, group, date);
 
-        if (status.equals("0")) errorResponse(resp, 400, "One or more parameter is missing. Required parameters: surname, name, group, date");
-        if (status.equals("1")) errorResponse(resp, 400, "Wrong date format. Expected format: yyyy-mm-dd");
-        if (status.equals("2")) successResponse(resp, 200);
+        if (status.equals("0")) error.parametersMissing(resp);
+        if (status.equals("1")) error.dateFormat(resp);
+        if (status.equals("2")) success.successResponse(resp, 201);
     }
 
     @Override
@@ -59,11 +63,11 @@ public class StudentController extends HttpServlet {
         String date = req.getParameter("date");
 
         String status = service.updateStudentCheck(path, surname, name, group, date);
-        if (status.equals("0")) errorResponse(resp, 400, "No student ID provided");
-        if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
-        if (status.equals("2")) successResponse(resp, 200);
-        if (status.equals("3")) errorResponse(resp, 400, "No parameters provided, no changes been made");
-        if (status.equals("4")) errorResponse(resp, 400, "Invalid student ID. Should be a type of number");
+        if (status.equals("0")) error.noStudentId(resp);
+        if (status.equals("1")) error.studentDoesntExist(resp);
+        if (status.equals("2")) success.successResponse(resp, 200);
+        if (status.equals("3")) error.noParameters(resp);
+        if (status.equals("4")) error.invalidStudentId(resp);
     }
 
     @Override
@@ -71,23 +75,9 @@ public class StudentController extends HttpServlet {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.deleteStudentCheck(path);
-        if (status.equals("0")) errorResponse(resp, 400, "No student ID provided");
-        if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
-        if (status.equals("2")) successResponse(resp, 200);
-        if (status.equals("3")) errorResponse(resp, 400, "Invalid student ID. Should be a type of number");
-    }
-
-    private void errorResponse(HttpServletResponse resp, int status, String message) throws IOException {
-        resp.setStatus(status);
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-        resp.getWriter().write(message);
-    }
-
-    private void successResponse(HttpServletResponse resp, int status) {
-        resp.setStatus(status);
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
+        if (status.equals("0")) error.noStudentId(resp);
+        if (status.equals("1")) error.studentDoesntExist(resp);
+        if (status.equals("2")) success.successResponse(resp, 200);
+        if (status.equals("3")) error.invalidStudentId(resp);
     }
 }

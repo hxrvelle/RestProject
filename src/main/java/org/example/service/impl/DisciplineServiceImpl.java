@@ -86,6 +86,15 @@ public class DisciplineServiceImpl implements DisciplineService {
         if (path.length == 2 && path[1].equals("terms")) {
             status = "7";
         }
+        else if (path.length > 2 && (!path[2].equals("terms"))) {
+            status = "9";
+        }
+        else if (path.length > 2 && path[2].equals("terms")) {
+            id = Integer.parseInt(path[1]);
+            if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "4";
+            else if (getDisciplineTerms(id).size() == 0) status = "5";
+            else status = "6";
+        }
         else if (path.length == 2 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
@@ -95,14 +104,7 @@ public class DisciplineServiceImpl implements DisciplineService {
         else if (path.length >= 2 && (!path[1].matches("\\d+"))) {
             status = "8";
         }
-        else if (path.length > 2 && path[2].equals("terms")) {
-            id = Integer.parseInt(path[1]);
-            if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "4";
-            else if (getDisciplineTerms(id).size() == 0) status = "5";
-            else status = "6";
-        } else if (path.length > 2 && (!path[2].equals("terms"))) {
-            status = "9";
-        } else {
+        else {
             List<Discipline> disciplines = disciplineRepo.getAllActiveDisciplines();
             if (disciplines.size() == 0) status = "2";
             else status = "3";
