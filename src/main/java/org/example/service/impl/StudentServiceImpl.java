@@ -75,28 +75,20 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public String getStudentsCheck(String[] path) {
         String status;
-
         int id;
         if (path.length > 1) {
             id = Integer.parseInt(path[1]);
 
             Student student = studentRepoImpl.getStudentById(id);
 
-            if (student.getId() == 0) {
-                status = "0";
-            } else {
-                status = "1";
-            }
+            if (student.getId() == 0) status = "0";
+            else status = "1";
         } else {
             List<Student> students = studentRepoImpl.getAllActiveStudents();
 
-            if (students.size() == 0) {
-                status = "2";
-            } else {
-                status = "3";
-            }
+            if (students.size() == 0) status = "2";
+            else status = "3";
         }
-
         return status;
     }
 
@@ -129,36 +121,32 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public String updateStudentCheckId(String[] path) {
-        String status = "";
+    public String updateStudentCheck(String[] path, String surname, String name, String group, String date) {
+        String status;
         if (path.length < 1) {
             status = "0";
-        }
-        return status;
-    }
-
-    @Override
-    public String updateStudentCheck(String[] path, String surname, String name, String group, String date) {
-        String status = "";
-
-        int id = Integer.parseInt(path[1]);
-        if (getStudentById(id).getId() == 0) {
-            status = "0";
         } else {
-            if (surname == null) surname = getStudentById(id).getSurname();
-            if (name == null) name = getStudentById(id).getName();
-            if (group == null) group = getStudentById(id).getGroup();
-            if (date == null) date = String.valueOf(getStudentById(id).getDate());
+            int id = Integer.parseInt(path[1]);
+            if (getStudentById(id).getId() == 0) {
+                status = "1";
+            }
+            else if (surname == null && name == null && group == null && date == null) status = "3";
+            else {
+                if (surname == null) surname = getStudentById(id).getSurname();
+                if (name == null) name = getStudentById(id).getName();
+                if (group == null) group = getStudentById(id).getGroup();
+                if (date == null) date = String.valueOf(getStudentById(id).getDate());
 
-            StudentIncomingDto student = new StudentIncomingDto();
+                StudentIncomingDto student = new StudentIncomingDto();
 
-            student.setSurname(surname);
-            student.setName(name);
-            student.setGroup(group);
-            student.setDate(Date.valueOf(date));
+                student.setSurname(surname);
+                student.setName(name);
+                student.setGroup(group);
+                student.setDate(Date.valueOf(date));
 
-            modifyStudent(id, student);
-            status = "1";
+                modifyStudent(id, student);
+                status = "2";
+            }
         }
         return status;
     }

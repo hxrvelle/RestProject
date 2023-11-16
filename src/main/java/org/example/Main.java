@@ -4,6 +4,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.startup.Tomcat;
+import org.example.controller.DisciplineController;
 import org.example.controller.PhoneController;
 import org.example.controller.StudentController;
 
@@ -17,6 +18,8 @@ public class Main {
         studentControllerWrapper.addMapping("/students/*");
         Wrapper phoneControllerWrapper = Tomcat.addServlet(tomcatContext, "PhoneController", new PhoneController());
         phoneControllerWrapper.addMapping("/phones/*");
+        Wrapper disciplineControllerWrapper = Tomcat.addServlet(tomcatContext, "DisciplineController", new DisciplineController());
+        disciplineControllerWrapper.addMapping("/disciplines/*");
 
         tomcat.start();
     }

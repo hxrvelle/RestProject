@@ -1,7 +1,5 @@
 package org.example.controller.dto;
 
-import org.example.model.Phone;
-
 import java.sql.Date;
 import java.util.ArrayList;
 

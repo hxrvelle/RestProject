@@ -19,7 +19,6 @@ public interface StudentService {
     /**Logical check methods */
     String getStudentsCheck(String[] path);
     String createStudentCheck(String surname, String name, String group, String date);
-    String updateStudentCheckId(String[] path);
     String updateStudentCheck(String[] path, String surname, String name, String group, String date);
     String deleteStudentCheck(String[] path);
 

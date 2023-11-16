@@ -1,5 +1,6 @@
 package org.example.repository.impl;
 
+import org.example.model.Discipline;
 import org.example.model.Term;
 import org.example.repository.TermRepo;
 
@@ -12,22 +13,27 @@ public class TermRepoImpl implements TermRepo {
     }
 
     @Override
-    public Term getTermById(String id) {
+    public List<Discipline> getTermDisciplines(int id) {
         return null;
     }
 
     @Override
-    public void createTerm(String duration, String[] disciplines) {
+    public Term getTermById(int id) {
+        return null;
+    }
+
+    @Override
+    public void createTerm(String duration, List<Discipline> disciplines) {
 
     }
 
     @Override
-    public void modifyTerm(String duration, String[] disciplines, int termId) {
+    public void modifyTerm(String duration, List<Discipline> disciplines, int id) {
 
     }
 
     @Override
-    public void deleteTerm(int termId) {
+    public void deleteTerm(int id) {
 
     }
 }

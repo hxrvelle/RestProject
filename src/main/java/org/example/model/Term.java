@@ -9,7 +9,7 @@ public class Term {
     private String term;
     private String duration;
     private int status;
-    private List<Discipline> disciplines = new ArrayList<>();
+    private List<Discipline> disciplines;
 
     public Term() {
     }

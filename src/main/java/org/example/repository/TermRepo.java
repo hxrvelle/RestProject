@@ -1,5 +1,6 @@
 package org.example.repository;
 
+import org.example.model.Discipline;
 import org.example.model.Term;
 
 import java.util.List;
@@ -7,11 +8,13 @@ import java.util.List;
 public interface TermRepo {
     List<Term> getAllActiveTerm();
 
-    Term getTermById(String id);
+    List<Discipline> getTermDisciplines(int id);
 
-    void createTerm(String duration, String[] disciplines);
+    Term getTermById(int id);
 
-    void modifyTerm(String duration, String[] disciplines, int termId);
+    void createTerm(String duration, List<Discipline> disciplines);
 
-    void deleteTerm(int termId);
+    void modifyTerm(String duration, List<Discipline> disciplines, int id);
+
+    void deleteTerm(int id);
 }

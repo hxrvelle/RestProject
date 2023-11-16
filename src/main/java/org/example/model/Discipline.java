@@ -8,7 +8,7 @@ public class Discipline {
     private int id;
     private String discipline;
     private int status;
-    private List<Term> terms = new ArrayList<>();
+    private List<Term> terms;
 
     public Discipline() {
     }

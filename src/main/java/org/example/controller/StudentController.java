@@ -52,19 +52,16 @@ public class StudentController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
+        String surname = req.getParameter("surname");
+        String name = req.getParameter("name");
+        String group = req.getParameter("group");
+        String date = req.getParameter("date");
 
-        String checkId = service.updateStudentCheckId(path);
-        if (checkId.equals("0")) errorResponse(resp, 400, "No student ID provided");
-        else {
-            String surname = req.getParameter("surname");
-            String name = req.getParameter("name");
-            String group = req.getParameter("group");
-            String date = req.getParameter("date");
-
-            String status = service.updateStudentCheck(path, surname, name, group, date);
-            if (status.equals("0")) errorResponse(resp, 400, "No student with this ID");
-            if (status.equals("1")) successResponse(resp, 200);
-        }
+        String status = service.updateStudentCheck(path, surname, name, group, date);
+        if (status.equals("0")) errorResponse(resp, 400, "No student ID provided");
+        if (status.equals("1")) errorResponse(resp, 400, "No student with this ID");
+        if (status.equals("2")) successResponse(resp, 200);
+        if (status.equals("3")) errorResponse(resp, 400, "No parameters provided, no changes been made");
     }
 
     @Override
