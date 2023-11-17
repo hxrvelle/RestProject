@@ -2,14 +2,12 @@ package org.example.service.impl;
 
 import org.example.controller.dto.DisciplineIncomingDto;
 import org.example.controller.dto.DisciplineOutgoingDto;
-import org.example.controller.dto.TermIncomingDto;
 import org.example.controller.dto.TermOutgoingDto;
 import org.example.controller.mapper.DisciplineDtoMapper;
 import org.example.controller.mapper.TermDtoMapper;
 import org.example.model.Discipline;
 import org.example.model.Term;
 import org.example.repository.impl.DisciplineRepoImpl;
-import org.example.repository.impl.TermRepoImpl;
 import org.example.service.DisciplineService;
 
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import java.util.List;
 
 public class DisciplineServiceImpl implements DisciplineService {
     private final DisciplineRepoImpl disciplineRepo;
-    private final TermRepoImpl termRepo = new TermRepoImpl();
 
     public DisciplineServiceImpl(DisciplineRepoImpl disciplineRepo) {
         this.disciplineRepo = disciplineRepo;

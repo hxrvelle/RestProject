@@ -2,9 +2,7 @@ package org.example.service;
 
 import org.example.controller.dto.DisciplineIncomingDto;
 import org.example.controller.dto.DisciplineOutgoingDto;
-import org.example.controller.dto.TermIncomingDto;
 import org.example.controller.dto.TermOutgoingDto;
-import org.example.model.Discipline;
 
 import java.util.List;
 

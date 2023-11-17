@@ -12,9 +12,9 @@ public interface TermRepo {
 
     Term getTermById(int id);
 
-    void createTerm(String duration, List<Discipline> disciplines);
+    void createTerm(Term term);
 
-    void modifyTerm(String duration, List<Discipline> disciplines, int id);
+    void modifyTerm(Term term, int id);
 
     void deleteTerm(int id);
 }

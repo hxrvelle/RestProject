@@ -7,6 +7,7 @@ import org.apache.catalina.startup.Tomcat;
 import org.example.controller.DisciplineController;
 import org.example.controller.PhoneController;
 import org.example.controller.StudentController;
+import org.example.controller.TermController;
 
 public class Main {
     public static void main(String[] args) throws LifecycleException {
@@ -20,6 +21,8 @@ public class Main {
         phoneControllerWrapper.addMapping("/phones/*");
         Wrapper disciplineControllerWrapper = Tomcat.addServlet(tomcatContext, "DisciplineController", new DisciplineController());
         disciplineControllerWrapper.addMapping("/disciplines/*");
+        Wrapper termControllerWrapper = Tomcat.addServlet(tomcatContext, "TermController", new TermController());
+        termControllerWrapper.addMapping("/terms/*");
 
         tomcat.start();
     }

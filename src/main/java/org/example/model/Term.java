@@ -62,10 +62,6 @@ public class Term {
         return disciplines;
     }
 
-    public void setDisciplines(ArrayList<Discipline> disciplines) {
-        this.disciplines = disciplines;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

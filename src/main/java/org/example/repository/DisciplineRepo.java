@@ -14,9 +14,9 @@ public interface DisciplineRepo {
 
     Discipline getDisciplineById(int id);
 
-    void createDiscipline(Discipline discipline) throws SQLException, IOException, ClassNotFoundException;
+    void createDiscipline(Discipline discipline);
 
-    void modifyDiscipline(Discipline discipline, int id) throws SQLException, IOException, ClassNotFoundException;
+    void modifyDiscipline(Discipline discipline, int id);
 
-    void deleteDiscipline(int id) throws SQLException, IOException, ClassNotFoundException;
+    void deleteDiscipline(int id);
 }
