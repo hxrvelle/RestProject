@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class ConnectionManagerImpl implements ConnectionManager {
+public class ConnectionManagerImpl {
 
     public String connectToDb() throws IOException {
         Properties properties = new Properties();
@@ -21,26 +21,24 @@ public class ConnectionManagerImpl implements ConnectionManager {
         return url + "?user=" + username + "&password=" + password;
     }
 
-    @Override
-    public Statement sqlConnection() throws ClassNotFoundException, SQLException, IOException {
+    public Connection connection() throws ClassNotFoundException, IOException, SQLException {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection(connectToDb());
+        return DriverManager.getConnection(connectToDb());
+    }
+
+    public Statement statement(Connection connection) throws SQLException {
         return connection.createStatement();
     }
 
-    @Override
-    public ResultSet connect(String query) throws SQLException, ClassNotFoundException, IOException {
-        return sqlConnection().executeQuery(query);
+    public ResultSet connect(Statement statement, String query) throws SQLException {
+        return statement.executeQuery(query);
     }
 
-    @Override
-    public void updateConnect(String query) throws SQLException, ClassNotFoundException, IOException {
-        sqlConnection().executeUpdate(query);
+    public void updateConnect(Statement statement, String query) throws SQLException {
+        statement.executeUpdate(query);
     }
 
-    @Override
-    public void voidConnect(String query) throws SQLException, ClassNotFoundException, IOException {
-        sqlConnection().execute(query);
+    public void voidConnect(Statement statement, String query) throws SQLException {
+        statement.execute(query);
     }
-
 }

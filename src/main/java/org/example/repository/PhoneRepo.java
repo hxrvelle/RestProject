@@ -10,6 +10,6 @@ public interface PhoneRepo {
     Phone getPhoneById(int id); //helper method
     List<Phone> getStudentPhones(int id);
     void addStudentPhone(Phone phone) throws SQLException, IOException, ClassNotFoundException;
-    void updateStudentPhone(int id, Phone phone);
-    void deleteStudentPhone(int id);
+    void updateStudentPhone(int id, Phone phone) throws SQLException, IOException, ClassNotFoundException;
+    void deleteStudentPhone(int id) throws SQLException, IOException, ClassNotFoundException;
 }

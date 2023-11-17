@@ -5,7 +5,9 @@ import org.example.model.Phone;
 import org.example.model.Student;
 import org.example.repository.StudentRepo;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +18,12 @@ public class StudentRepoImpl implements StudentRepo {
     @Override
     public List<Student> getAllActiveStudents() {
         List<Student> students = new ArrayList<>();
-
         query = "SELECT * FROM student LEFT JOIN phone ON phone.id_student = student.id WHERE student.status = 1;";
-
-        try {
-            ResultSet rs = connectionManager.connect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query)
+        ) {
             while (rs.next()) {
                 int studentId = rs.getInt("id");
                 boolean studentExists = false;
@@ -63,14 +66,15 @@ public class StudentRepoImpl implements StudentRepo {
     }
 
     @Override
-    public Student getStudentById(int id) {
+    public Student getStudentById(int id){
         Student student = new Student();
         ArrayList<Phone> phoneNumbers = new ArrayList<>();
-
         query = "SELECT * FROM student LEFT JOIN phone ON phone.id_student = student.id WHERE student.id ='" + id + "';";
-
-        try {
-            ResultSet rs = connectionManager.connect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query)
+        ) {
             while (rs.next()) {
                 student.setId(rs.getInt("id"));
                 student.setSurname(rs.getString("surname"));
@@ -99,8 +103,11 @@ public class StudentRepoImpl implements StudentRepo {
                 student.getName() + "', '" +
                 student.getGroup() + "', '" +
                 student.getDate() + "');";
-        try {
-            connectionManager.updateConnect(query);
+        try (
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,8 +120,11 @@ public class StudentRepoImpl implements StudentRepo {
                 student.getName() + "', `group` ='" +
                 student.getGroup() + "', `date` = '" +
                 student.getDate() + "' WHERE (`id` ='" + id + "');";
-        try {
-            connectionManager.updateConnect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+        ) {
+            connectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,8 +133,11 @@ public class StudentRepoImpl implements StudentRepo {
     @Override
     public void deleteStudent(int id) {
         query = "UPDATE `student` SET `status` = '0' WHERE (`id` ='" + id + "');";
-        try {
-            connectionManager.voidConnect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+        ) {
+            connectionManager.voidConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }

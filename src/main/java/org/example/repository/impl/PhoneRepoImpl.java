@@ -4,9 +4,9 @@ import org.example.db.ConnectionManagerImpl;
 import org.example.model.Phone;
 import org.example.repository.PhoneRepo;
 
-import java.io.IOException;
+import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +19,11 @@ public class PhoneRepoImpl implements PhoneRepo {
         Phone phone = new Phone();
 
         query = "SELECT * FROM students.phone WHERE id ='" + id + "';";
-        try {
-            ResultSet rs = connectionManager.connect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query)
+        ) {
             while (rs.next()) {
                 phone.setId(rs.getInt("id"));
                 phone.setPhoneNumber(rs.getString("phone"));
@@ -37,8 +40,11 @@ public class PhoneRepoImpl implements PhoneRepo {
         List<Phone> studentPhones = new ArrayList<>();
 
         query = "SELECT * FROM students.phone WHERE id_student ='" + id + "';";
-        try {
-            ResultSet rs = connectionManager.connect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query)
+        ) {
             while (rs.next()) {
                 Phone phone = new Phone();
 
@@ -57,8 +63,11 @@ public class PhoneRepoImpl implements PhoneRepo {
     public void addStudentPhone(Phone phone) {
         query = "INSERT INTO `phone` (`id_student`, `phone`) VALUES ('" +
                 phone.getStudentId() + "', '" + phone.getPhoneNumber() + "');";
-        try {
-            connectionManager.updateConnect(query);
+        try (
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,8 +76,11 @@ public class PhoneRepoImpl implements PhoneRepo {
     @Override
     public void updateStudentPhone(int id, Phone phone) {
         query = "UPDATE `students`.`phone` SET `phone` = '" + phone.getPhoneNumber() + "' WHERE (`id` ='" + id + "');";
-        try {
-            connectionManager.updateConnect(query);
+        try (
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,8 +89,11 @@ public class PhoneRepoImpl implements PhoneRepo {
     @Override
     public void deleteStudentPhone(int id) {
         query = "DELETE FROM `students`.`phone` WHERE (`id` = '" + id + "');";
-        try {
-            connectionManager.voidConnect(query);
+        try (
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.voidConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }

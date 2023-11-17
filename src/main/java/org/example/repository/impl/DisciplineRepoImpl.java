@@ -5,7 +5,9 @@ import org.example.model.Discipline;
 import org.example.model.Term;
 import org.example.repository.DisciplineRepo;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +17,12 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     @Override
     public List<Discipline> getAllActiveDisciplines() {
         List<Discipline> disciplines = new ArrayList<>();
-
         query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline LEFT JOIN term_discipline ON discipline.id = term_discipline.id_discipline LEFT JOIN term ON term.id = term_discipline.id_term WHERE discipline.status = 1;";
-
-        try {
-            ResultSet rs = connectionManager.connect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query)
+        ) {
             while (rs.next()) {
                 int disciplineId = rs.getInt("id");
                 boolean disciplineExists = false;
@@ -66,8 +69,11 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     public List<Term> getDisciplineTerms(int id) {
         List<Term> terms = new ArrayList<>();
         query = "SELECT term.* FROM students.term JOIN term_discipline on term_discipline.id_term = term.id JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE discipline.id ='" + id + "';";
-        try {
-            ResultSet rs = connectionManager.connect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query)
+        ) {
             while (rs.next()) {
                 Term term = new Term();
 
@@ -91,8 +97,11 @@ public class DisciplineRepoImpl implements DisciplineRepo {
 
         query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline LEFT JOIN term_discipline ON discipline.id = term_discipline.id_discipline LEFT JOIN term ON term.id = term_discipline.id_term WHERE discipline.id ='" + id + "';";
 
-        try {
-            ResultSet rs = connectionManager.connect(query);
+        try(
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query)
+        ) {
             while (rs.next()){
                 discipline.setId(rs.getInt("discipline.id"));
                 discipline.setDiscipline(rs.getString("discipline.discipline"));
@@ -116,8 +125,11 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     @Override
     public void createDiscipline(Discipline discipline) {
         query = "INSERT INTO `discipline` (`discipline`) VALUES ('" + discipline.getDiscipline() + "');";
-        try {
-            connectionManager.updateConnect(query);
+        try (
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,8 +138,11 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     @Override
     public void modifyDiscipline(Discipline discipline, int id) {
         query = "UPDATE `students`.`discipline` SET `discipline` = '" + discipline.getDiscipline() + "' WHERE (`id` = '" + id + "');";
-        try {
-            connectionManager.updateConnect(query);
+        try (
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -136,8 +151,11 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     @Override
     public void deleteDiscipline(int id) {
         query = "UPDATE `discipline` SET `status` = '0' WHERE (`id` ='" + id + "');";
-        try {
-            connectionManager.voidConnect(query);
+        try (
+                Connection connection = connectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.voidConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }

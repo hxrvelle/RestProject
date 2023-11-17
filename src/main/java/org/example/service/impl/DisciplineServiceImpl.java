@@ -83,35 +83,29 @@ public class DisciplineServiceImpl implements DisciplineService {
     public String getDisciplinesCheck(String[] path) {
         String status;
         int id;
-        if (path.length == 2 && path[1].matches("\\d+")) { //one discipline
+        if (path.length == 2 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
-            if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "00"; //dis doesnt exist
-            else status = "0"; //OK dis-es by id
+            if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "00";
+            else status = "0";
         }
-        else if (path.length == 2 && (!path[1].matches("\\d+"))) { //invalid id
-            status = "1"; //invalid dis id
-        }
-        else if (path.length == 2 && path[1].equals("terms")) { //no id provided for terms
-            status = "2"; //no dis id
-        }
-        else if (path.length > 2 && path[1].matches("\\d+")) { //dis terms
+        else if (path.length == 2 && (!path[1].matches("\\d+"))) status = "1";
+        else if (path.length == 2 && path[1].equals("terms")) status = "2";
+        else if (path.length > 2 && path[1].matches("\\d+")) {
             id = Integer.parseInt(path[1]);
 
             if (path[2].equals("terms")) {
-                if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "3"; //dis doesnt exist
-                else if (getDisciplineTerms(id).size() == 0) status = "4"; //no terms
-                else status = "5"; //OK dis terms
-            } else {
-                status = "6"; //invalid request (not terms param)
+                if (disciplineRepo.getDisciplineById(id).getId() == 0) status = "3";
+                else if (getDisciplineTerms(id).size() == 0) status = "4";
+                else status = "5";
             }
+            else status = "6";
         }
-        else if (path.length > 2 && (!path[1].matches("\\d+"))) {
-            status = "7"; //invalid id
-        } else { //all disciplines
+        else if (path.length > 2 && (!path[1].matches("\\d+"))) status = "7";
+        else {
             List<Discipline> disciplines = disciplineRepo.getAllActiveDisciplines();
-            if (disciplines.size() == 0) status = "8"; //no dis-es
-            else status = "9"; //OK all dis-es
+            if (disciplines.size() == 0) status = "8";
+            else status = "9";
         }
         return status;
     }
