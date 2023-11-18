@@ -136,7 +136,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
 
     @Override
     public void modifyDiscipline(Discipline discipline, int id) {
-        query = "UPDATE `students`.`discipline` SET `discipline` = '" + discipline.getDiscipline() + "' WHERE (`id` = '" + id + "');";
+        query = "UPDATE `discipline` SET `discipline` = '" + discipline.getDiscipline() + "' WHERE (`id` = '" + id + "');";
         try (
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connection.createStatement()

@@ -48,7 +48,7 @@ public class StudentRepoImpl implements StudentRepo {
                     student.setName(rs.getString("name"));
                     student.setGroup(rs.getString("group"));
                     student.setDate(rs.getDate("date"));
-                    student.setStatus(1);
+                    student.setStatus(rs.getInt("status"));
 
                     ArrayList<Phone> phoneNumbers = new ArrayList<>();
                     Phone phone = new Phone();
@@ -83,7 +83,7 @@ public class StudentRepoImpl implements StudentRepo {
                 student.setName(rs.getString("name"));
                 student.setGroup(rs.getString("group"));
                 student.setDate(rs.getDate("date"));
-                student.setStatus(1);
+                student.setStatus(rs.getInt("status"));
 
                 Phone phone = new Phone();
                 phone.setId(rs.getInt("phone.id"));
@@ -118,7 +118,7 @@ public class StudentRepoImpl implements StudentRepo {
 
     @Override
     public void modifyStudent(int id, Student student) {
-        query = "UPDATE `students`.`student` SET `surname` ='" +
+        query = "UPDATE `student` SET `surname` ='" +
                 student.getSurname() + "', `name` = '" +
                 student.getName() + "', `group` ='" +
                 student.getGroup() + "', `date` = '" +

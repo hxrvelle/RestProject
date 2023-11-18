@@ -17,7 +17,7 @@ public class PhoneRepoImpl implements PhoneRepo {
     public Phone getPhoneById(int id) {
         Phone phone = new Phone();
 
-        query = "SELECT * FROM students.phone WHERE id ='" + id + "';";
+        query = "SELECT * FROM phone WHERE id ='" + id + "';";
         try(
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connection.createStatement();
@@ -38,7 +38,7 @@ public class PhoneRepoImpl implements PhoneRepo {
     public List<Phone> getStudentPhones(int id) {
         List<Phone> studentPhones = new ArrayList<>();
 
-        query = "SELECT * FROM students.phone WHERE id_student ='" + id + "';";
+        query = "SELECT * FROM phone WHERE id_student ='" + id + "';";
         try(
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connection.createStatement();
@@ -74,7 +74,7 @@ public class PhoneRepoImpl implements PhoneRepo {
 
     @Override
     public void updateStudentPhone(int id, Phone phone) {
-        query = "UPDATE `students`.`phone` SET `phone` = '" + phone.getPhoneNumber() + "' WHERE (`id` ='" + id + "');";
+        query = "UPDATE `phone` SET `phone` = '" + phone.getPhoneNumber() + "' WHERE (`id` ='" + id + "');";
         try (
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connection.createStatement()
@@ -87,7 +87,7 @@ public class PhoneRepoImpl implements PhoneRepo {
 
     @Override
     public void deleteStudentPhone(int id) {
-        query = "DELETE FROM `students`.`phone` WHERE (`id` = '" + id + "');";
+        query = "DELETE FROM `phone` WHERE (`id` = '" + id + "');";
         try (
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connection.createStatement()
