@@ -67,7 +67,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     @Override
     public List<Term> getDisciplineTerms(int id) {
         List<Term> terms = new ArrayList<>();
-        query = "SELECT term.* FROM students.term JOIN term_discipline on term_discipline.id_term = term.id JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE discipline.id ='" + id + "';";
+        query = "SELECT term.* FROM term JOIN term_discipline on term_discipline.id_term = term.id JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE discipline.id ='" + id + "';";
         try(
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connection.createStatement();

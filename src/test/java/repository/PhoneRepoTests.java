@@ -1,4 +1,4 @@
-package repository.positive;
+package repository;
 
 import com.zaxxer.hikari.HikariConfig;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -19,7 +19,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,7 +84,7 @@ public class PhoneRepoTests {
 
         ArrayList<Phone> phoneNumbers = studentRepo.getStudentById(1).getPhoneNumbers();
         for (int i = 0; i < phoneNumbers.size(); i++) {
-            if (Objects.equals(phoneNumbers.get(i).getPhoneNumber(), "9876543210")) {
+            if (phoneNumbers.get(i).getPhoneNumber().equals("9876543210")) {
                 id = phoneNumbers.get(i).getId();
             }
         }

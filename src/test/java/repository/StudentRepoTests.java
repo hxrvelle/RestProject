@@ -1,4 +1,4 @@
-package repository.positive;
+package repository;
 
 import com.zaxxer.hikari.HikariConfig;
 import org.apache.ibatis.jdbc.ScriptRunner;

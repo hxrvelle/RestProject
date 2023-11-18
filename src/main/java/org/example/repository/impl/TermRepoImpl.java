@@ -67,7 +67,7 @@ public class TermRepoImpl implements TermRepo {
     @Override
     public List<Discipline> getTermDisciplines(int id) {
         List<Discipline> disciplines = new ArrayList<>();
-        query = "SELECT discipline.* FROM students.discipline JOIN term_discipline on term_discipline.id_discipline = discipline.id JOIN term ON term.id = term_discipline.id_term WHERE term.id ='" + id + "';";
+        query = "SELECT discipline.* FROM discipline JOIN term_discipline on term_discipline.id_discipline = discipline.id JOIN term ON term.id = term_discipline.id_term WHERE term.id ='" + id + "';";
         try(
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connection.createStatement();
@@ -121,7 +121,7 @@ public class TermRepoImpl implements TermRepo {
     }
 
     @Override
-    public void createTerm(Term term) throws SQLException {
+    public void createTerm(Term term) {
         String query1 = "SELECT term FROM term ORDER BY id DESC LIMIT 1;";
         String lastTermName = "";
         ResultSet rs1 = null;
@@ -156,7 +156,11 @@ public class TermRepoImpl implements TermRepo {
             e.printStackTrace();
         } finally {
             assert rs1 != null;
-            rs1.close();
+            try {
+                rs1.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
