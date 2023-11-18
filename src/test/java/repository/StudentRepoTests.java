@@ -26,10 +26,7 @@ public class StudentRepoTests {
     private static StudentRepoImpl studentRepo;
 
     @Container
-    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:latest")
-            .withDatabaseName("test_db")
-            .withUsername("testuser")
-            .withPassword("testpassword");
+    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:latest");
 
     @BeforeAll
     public static void setUp() {
@@ -40,6 +37,7 @@ public class StudentRepoTests {
         config.setJdbcUrl(mysqlContainer.getJdbcUrl());
         config.setUsername(mysqlContainer.getUsername());
         config.setPassword(mysqlContainer.getPassword());
+        ConnectionManager.setData(config);
 
         try {
             ScriptRunner scriptRunner = new ScriptRunner(ConnectionManager.connection());
@@ -65,8 +63,6 @@ public class StudentRepoTests {
         // Write your test cases here using studentRepo.getStudentById()
         // Ensure the test cases cover different scenarios
     }
-
-    // Other test methods for create, modify, and delete operations
 
     @AfterAll
     public static void tearDown() {

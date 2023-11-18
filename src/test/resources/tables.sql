@@ -1,4 +1,4 @@
-create table student
+CREATE TABLE test.student
 (
     id      int auto_increment
         primary key,
@@ -9,10 +9,10 @@ create table student
     status  enum ('1', '0') default '1' null
 );
 
-INSERT INTO `student` (`surname`, `name`, `group`, `date`, `status`) VALUES ('Тестовый', 'Пользователь1', 'КТ-21', '2022-11-23 00:00:00.000', '1');
-INSERT INTO `student` (`surname`, `name`, `group`, `date`, `status`) VALUES ('Тестовый', 'Пользователь1', 'КТ-21', '2022-11-23 00:00:00.000', '1');
+INSERT INTO test.student (`surname`, `name`, `group`, `date`, `status`) VALUES ('Тестовый', 'Пользователь1', 'КТ-21', '2022-11-23 00:00:00.000', '1');
+INSERT INTO test.student (`surname`, `name`, `group`, `date`, `status`) VALUES ('Тестовый', 'Пользователь2', 'КТ-21', '2022-11-23 00:00:00.000', '1');
 
-create table phone
+CREATE TABLE test.phone
 (
     id         int auto_increment
         primary key,
@@ -25,10 +25,10 @@ create table phone
 create index fk5_idx
     on phone (id_student);
 
-INSERT INTO `phone` (`id_student`, `phone`) VALUES ('1', '1111111');
-INSERT INTO `phone` (`id_student`, `phone`) VALUES ('2', '2222222');
+INSERT INTO test.phone (`id_student`, `phone`) VALUES ('1', '1111111');
+INSERT INTO test.phone (`id_student`, `phone`) VALUES ('2', '2222222');
 
-create table term
+CREATE TABLE test.term
 (
     id       int auto_increment
         primary key,
@@ -37,10 +37,10 @@ create table term
     status   enum ('1', '0') default '1' null
 );
 
-INSERT INTO `term` (`term`, `duration`, `status`) VALUES ('Семестр 1', '10 недель', '1');
-INSERT INTO `term` (`term`, `duration`, `status`) VALUES ('Семестр 2', '12 недель', '1');
+INSERT INTO test.term (`term`, `duration`, `status`) VALUES ('Семестр 1', '10 недель', '1');
+INSERT INTO test.term (`term`, `duration`, `status`) VALUES ('Семестр 2', '12 недель', '1');
 
-create table discipline
+CREATE TABLE test.discipline
 (
     id         int auto_increment
         primary key,
@@ -48,10 +48,10 @@ create table discipline
     status     enum ('1', '0') default '1' null
 );
 
-INSERT INTO `discipline` (`discipline`, `status`) VALUES ('Английский язык', '1');
-INSERT INTO `discipline` (`discipline`, `status`) VALUES ('Немецкий язык', '1');
+INSERT INTO test.discipline (`discipline`, `status`) VALUES ('Английский язык', '1');
+INSERT INTO test.discipline (`discipline`, `status`) VALUES ('Немецкий язык', '1');
 
-create table term_discipline
+CREATE TABLE test.term_discipline
 (
     id            int auto_increment
         primary key,
@@ -69,6 +69,6 @@ create index fk1_idx
 create index fk2_idx
     on term_discipline (id_discipline);
 
-INSERT INTO `term_discipline` (`id_term`, `id_discipline`) VALUES ('1', '1');
-INSERT INTO `term_discipline` (`id_term`, `id_discipline`) VALUES ('1', '2');
-INSERT INTO `term_discipline` (`id_term`, `id_discipline`) VALUES ('2', '1');
+INSERT INTO test.term_discipline (`id_term`, `id_discipline`) VALUES ('1', '1');
+INSERT INTO test.term_discipline (`id_term`, `id_discipline`) VALUES ('1', '2');
+INSERT INTO test.term_discipline (`id_term`, `id_discipline`) VALUES ('2', '1');
