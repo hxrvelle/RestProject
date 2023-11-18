@@ -5,11 +5,13 @@ import org.example.controller.responseHandlers.TermErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.service.impl.TermServiceImpl;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet(name = "TermController", urlPatterns = "/terms/*")
 public class TermController extends HttpServlet {
@@ -52,11 +54,36 @@ public class TermController extends HttpServlet {
         String disciplines = req.getParameter("disciplines");
         String duration = req.getParameter("duration");
 
-        String status = service.createTermCheck(disciplines, duration);
-
+        String status = "";
+        try {
+            status = service.createTermCheck(disciplines, duration);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         if (status.equals("0")) error.noDisciplinesProvided(resp);
         if (status.equals("1")) success.successResponse(resp, 201);
         if (status.equals("2")) error.invalidDisciplineId(resp);
         if (status.equals("3")) error.disciplineDoesntExist(resp);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String[] path = req.getPathInfo().split("/");
+        String disciplines = req.getParameter("disciplines");
+        String duration = req.getParameter("duration");
+
+        String status = "";
+        try {
+            status = service.modifyTermCheck(path, disciplines, duration);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (status.equals("0")) error.invalidTermId(resp);
+        if (status.equals("1")) error.noTermId(resp);
+        if (status.equals("2")) error.termDoesntExist(resp);
+        if (status.equals("3")) error.noChanges(resp);
+        if (status.equals("4")) error.invalidDisciplineId(resp);
+        if (status.equals("5")) error.disciplineDoesntExist(resp);
+        if (status.equals("6")) success.successResponse(resp, 200);
     }
 }

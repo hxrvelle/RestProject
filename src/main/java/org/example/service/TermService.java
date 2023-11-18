@@ -6,6 +6,7 @@ import org.example.controller.dto.TermOutgoingDto;
 import org.example.model.Discipline;
 import org.example.model.Term;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface TermService {
@@ -15,14 +16,14 @@ public interface TermService {
 
     TermOutgoingDto getTermById(int id);
 
-    void createTerm(TermIncomingDto termDto);
+    void createTerm(TermIncomingDto termDto) throws SQLException;
 
-    void modifyTerm(TermIncomingDto termDto, int id);
+    void modifyTerm(TermIncomingDto termDto, int id) throws SQLException;
 
     void deleteTerm(int id);
 
     String getTermsCheck(String[] path);
-    String createTermCheck(String disciplines, String duration);
-    String modifyDisciplineCheck(String[] path, String discipline);
-    String deleteDisciplineCheck(String[] path);
+    String createTermCheck(String disciplines, String duration) throws SQLException;
+    String modifyTermCheck(String[] path, String disciplines, String duration) throws SQLException;
+    String deleteTermCheck(String[] path);
 }

@@ -48,6 +48,11 @@ public class TermErrorResponses {
         resp.getWriter().write("Invalid discipline ID(s). Should be a type of number");
     }
 
+    public void noChanges(HttpServletResponse resp) throws IOException {
+        e.errorResponse(resp);
+        resp.getWriter().write("No parameters were provided, no changes been made");
+    }
+
     public void invalidRequest(HttpServletResponse resp) throws IOException {
         e.errorResponse(resp);
         resp.getWriter().write("Invalid request");

@@ -12,6 +12,7 @@ import org.example.repository.impl.DisciplineRepoImpl;
 import org.example.repository.impl.TermRepoImpl;
 import org.example.service.TermService;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public void createTerm(TermIncomingDto termDto) {
+    public void createTerm(TermIncomingDto termDto) throws SQLException {
         Term term;
         List<Discipline> disciplines = new ArrayList<>();
         for (int i = 0; i < termDto.getDisciplines().size(); i++) {
@@ -72,8 +73,16 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public void modifyTerm(TermIncomingDto termDto, int id) {
-
+    public void modifyTerm(TermIncomingDto termDto, int id) throws SQLException {
+        Term term;
+        List<Discipline> disciplines = new ArrayList<>();
+        for (int i = 0; i < termDto.getDisciplines().size(); i++) {
+            disciplines.add(DisciplineDtoMapper.INSTANCE.mapToEntity(termDto.getDisciplines().get(i)));
+        }
+        term = TermDtoMapper.INSTANCE.mapToEntity(termDto);
+        term.getDisciplines().clear();
+        term.setDisciplines(disciplines);
+        termRepo.modifyTerm(term, id);
     }
 
     @Override
@@ -113,10 +122,11 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public String createTermCheck(String disciplines, String duration) {
+    public String createTermCheck(String disciplines, String duration) throws SQLException {
         String status = "";
 
-        if (disciplines.length() > 1) {
+        if (disciplines == null) status = "0";
+        else if (disciplines.length() > 1) {
             String[] disciplineIds = disciplines.split(",");
 
             boolean validIds = true;
@@ -124,9 +134,8 @@ public class TermServiceImpl implements TermService {
                 if (!disciplineIds[i].matches("\\d+")) validIds = false;
             }
 
-            if (!validIds) {
-                status = "2";
-            } else {
+            if (!validIds) status = "2";
+            else {
                 List<Discipline> disciplinesList = new ArrayList<>();
 
                 for (int j = 0; j < disciplineIds.length; j++) {
@@ -144,20 +153,83 @@ public class TermServiceImpl implements TermService {
                     termDto.setDuration(duration);
                     termDto.setDisciplines(disciplineDtos);
                     createTerm(termDto);
-                    status = "1"; //okay
+                    status = "1";
                 }
             }
-        } else status = "0"; // no disciplines provided
+        } else status = "0";
         return status;
     }
 
     @Override
-    public String modifyDisciplineCheck(String[] path, String discipline) {
-        return null;
+    public String modifyTermCheck(String[] path, String disciplines, String duration) throws SQLException {
+        String status;
+
+        int id;
+        if (path.length == 2  && path[1].matches("\\d+")) {
+            id = Integer.parseInt(path[1]);
+
+            if (termRepo.getTermById(id).getId() == 0) status = "2";
+            else if ((disciplines == null || disciplines.equals("")) && (duration == null || duration.equals(""))) status = "3";
+            else if (duration == null || duration.equals("")) {
+                duration = termRepo.getTermById(id).getDuration();
+
+                status = createTermObj(disciplines, duration, id);
+            } else if (disciplines == null || disciplines.equals("")) {
+
+                List<Discipline> disciplineList = termRepo.getTermDisciplines(id);
+                List<DisciplineIncomingDto> disciplineDtos = DisciplineDtoMapper.INSTANCE.mapToDtoIncoming(disciplineList);
+
+                TermIncomingDto termDto = new TermIncomingDto();
+                termDto.setDuration(duration);
+                termDto.setDisciplines(disciplineDtos);
+                modifyTerm(termDto, id);
+                status = "6";
+            } else {
+                status = createTermObj(disciplines, duration, id);
+            }
+        } else if (path.length == 2  && (!path[1].matches("\\d+"))) {
+            status = "0";
+        } else {
+            status = "1";
+        }
+        return status;
     }
 
     @Override
-    public String deleteDisciplineCheck(String[] path) {
+    public String deleteTermCheck(String[] path) {
         return null;
+    }
+
+    private String createTermObj(String disciplines, String duration, int id) throws SQLException {
+        String status;
+        String[] disciplineIds = disciplines.split(",");
+
+        boolean validIds = true;
+        for (String disciplineId : disciplineIds) {
+            if (!disciplineId.matches("\\d+")) {
+                validIds = false;
+                break;
+            }
+        }
+        if (!validIds) status = "4";
+        else {
+            List<Discipline> disciplinesList = new ArrayList<>();
+
+            for (String disciplineId : disciplineIds) {
+                Discipline discipline = disciplineRepo.getDisciplineById(Integer.parseInt(disciplineId));
+                if (discipline.getId() != 0) disciplinesList.add(discipline);
+            }
+
+            if (disciplinesList.isEmpty()) status = "5";
+            else {
+                List<DisciplineIncomingDto> disciplineDtos = DisciplineDtoMapper.INSTANCE.mapToDtoIncoming(disciplinesList);
+                TermIncomingDto termDto = new TermIncomingDto();
+                termDto.setDuration(duration);
+                termDto.setDisciplines(disciplineDtos);
+                modifyTerm(termDto, id);
+                status = "6";
+            }
+        }
+        return status;
     }
 }

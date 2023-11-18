@@ -7,6 +7,7 @@ import org.example.repository.TermRepo;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,9 +122,10 @@ public class TermRepoImpl implements TermRepo {
     }
 
     @Override
-    public void createTerm(Term term) {
+    public void createTerm(Term term) throws SQLException {
         String query1 = "SELECT term FROM term ORDER BY id DESC LIMIT 1;";
         String lastTermName = "";
+        ResultSet rs1 = null;
         try(
                 Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
@@ -140,7 +142,7 @@ public class TermRepoImpl implements TermRepo {
             connectionManager.updateConnect(statement, query2);
 
             String query3 = "SELECT id FROM term ORDER BY id DESC LIMIT 1;";
-            ResultSet rs1 = connectionManager.connect(statement, query3);
+            rs1 = connectionManager.connect(statement, query3);
             int newTermId = 0;
             while (rs1.next()) {
                 newTermId = rs1.getInt("id");
@@ -153,12 +155,48 @@ public class TermRepoImpl implements TermRepo {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            assert rs1 != null;
+            rs1.close();
         }
     }
 
     @Override
-    public void modifyTerm(Term term, int id) {
+    public void modifyTerm(Term term, int termId) throws SQLException {
+        query = "UPDATE `term` SET `duration` = '" + term.getDuration() + "' WHERE (`id` ='" + termId + "');";
+        ResultSet rs = null;
+        try(
+                Connection connection = ConnectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.updateConnect(statement, query);
 
+            String query1 = "SELECT * FROM term_discipline WHERE (`id_term` = '" + termId + "');";
+            ArrayList<String> ids = new ArrayList<>();
+            rs = connectionManager.connect(statement, query1);
+            while (rs.next()) {
+                ids.add(rs.getString("id"));
+            }
+
+            for (String id:ids) {
+                String query2 = "DELETE FROM `mark` WHERE (`id_term_discipline` = '" + id + "');";
+                connectionManager.voidConnect(statement, query2);
+            }
+
+            String query3 = "DELETE FROM `term_discipline` WHERE (`id_term` = '" + termId + "');";
+            connectionManager.voidConnect(statement, query3);
+
+            for (int i = 0; i < term.getDisciplines().size(); i++) {
+                int disciplineId = term.getDisciplines().get(i).getId();
+                String query4 = "INSERT INTO `term_discipline` (`id_term`, `id_discipline`) VALUES ('" + termId + "', '" + disciplineId + "');";
+                connectionManager.updateConnect(statement, query4);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            assert rs != null;
+            rs.close();
+        }
     }
 
     @Override
