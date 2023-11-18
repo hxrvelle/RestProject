@@ -201,6 +201,14 @@ public class TermRepoImpl implements TermRepo {
 
     @Override
     public void deleteTerm(int id) {
-
+        query = "UPDATE `term` SET `status` = '0' WHERE (`id` ='" + id + "');";
+        try (
+                Connection connection = ConnectionManager.connection();
+                Statement statement = connectionManager.statement(connection)
+        ) {
+            connectionManager.voidConnect(statement, query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -5,7 +5,6 @@ import org.example.controller.responseHandlers.TermErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.service.impl.TermServiceImpl;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -85,5 +84,16 @@ public class TermController extends HttpServlet {
         if (status.equals("4")) error.invalidDisciplineId(resp);
         if (status.equals("5")) error.disciplineDoesntExist(resp);
         if (status.equals("6")) success.successResponse(resp, 200);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String[] path = req.getPathInfo().split("/");
+
+        String status = service.deleteTermCheck(path);
+        if (status.equals("0")) error.noTermId(resp);
+        if (status.equals("1")) error.termDoesntExist(resp);
+        if (status.equals("2")) success.successResponse(resp, 200);
+        if (status.equals("3")) error.invalidTermId(resp);
     }
 }

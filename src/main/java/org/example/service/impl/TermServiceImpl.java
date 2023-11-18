@@ -87,7 +87,7 @@ public class TermServiceImpl implements TermService {
 
     @Override
     public void deleteTerm(int id) {
-
+        termRepo.deleteTerm(id);
     }
 
     @Override
@@ -197,7 +197,19 @@ public class TermServiceImpl implements TermService {
 
     @Override
     public String deleteTermCheck(String[] path) {
-        return null;
+        String status;
+        if (path.length < 1) status = "0";
+        else if (path.length == 2  && path[1].matches("\\d+")) {
+            int id = Integer.parseInt(path[1]);
+            if (getTermById(id).getId() == 0) status = "1";
+            else {
+                deleteTerm(id);
+                status = "2";
+            }
+        } else {
+            status = "3";
+        }
+        return status;
     }
 
     private String createTermObj(String disciplines, String duration, int id) throws SQLException {
