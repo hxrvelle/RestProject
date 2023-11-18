@@ -33,6 +33,11 @@ public class TermErrorResponses {
         resp.getWriter().write("No disciplines provided");
     }
 
+    public void disciplineDoesntExist(HttpServletResponse resp) throws IOException {
+        e.errorResponse(resp);
+        resp.getWriter().write("Discipline with one or more of the IDs doesn't exist");
+    }
+
     public void invalidTermId(HttpServletResponse resp) throws IOException {
         e.errorResponse(resp);
         resp.getWriter().write("Invalid term ID. Should be a type of number");

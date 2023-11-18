@@ -3,10 +3,8 @@ package org.example.controller;
 import com.google.gson.Gson;
 import org.example.controller.responseHandlers.TermErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
-import org.example.repository.impl.TermRepoImpl;
 import org.example.service.impl.TermServiceImpl;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +54,9 @@ public class TermController extends HttpServlet {
 
         String status = service.createTermCheck(disciplines, duration);
 
-        if (status.equals("0")) error.noDisciplines(resp);
+        if (status.equals("0")) error.noDisciplinesProvided(resp);
         if (status.equals("1")) success.successResponse(resp, 201);
+        if (status.equals("2")) error.invalidDisciplineId(resp);
+        if (status.equals("3")) error.disciplineDoesntExist(resp);
     }
 }

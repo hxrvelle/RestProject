@@ -13,7 +13,6 @@ import org.example.repository.impl.TermRepoImpl;
 import org.example.service.TermService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TermServiceImpl implements TermService {
@@ -117,32 +116,38 @@ public class TermServiceImpl implements TermService {
     public String createTermCheck(String disciplines, String duration) {
         String status = "";
 
-        String[] disciplineIds = disciplines.split(",");
+        if (disciplines.length() > 1) {
+            String[] disciplineIds = disciplines.split(",");
 
-        for (int i = 0; i < disciplineIds.length; i++) {
-            if (!disciplineIds[i].matches("\\d+")) disciplineIds[i] = "0";
-        }
+            boolean validIds = true;
+            for (int i = 0; i < disciplineIds.length; i++) {
+                if (!disciplineIds[i].matches("\\d+")) validIds = false;
+            }
 
-        if (disciplineIds.length == 0) status = "0"; // no disciplines provided
-        else {
-            List<DisciplineIncomingDto> disciplineList = new ArrayList<>();
+            if (!validIds) {
+                status = "2";
+            } else {
+                List<Discipline> disciplinesList = new ArrayList<>();
 
-            List<Discipline> disciplinesList = new ArrayList<>();
-            for (int j = 0; j < disciplineIds.length; j++) {
-                Discipline discipline = disciplineRepo.getDisciplineById(Integer.parseInt(disciplineIds[j]));
-                if (discipline.getId() != 0) {
-                    disciplinesList.add(discipline);
+                for (int j = 0; j < disciplineIds.length; j++) {
+                    Discipline discipline = disciplineRepo.getDisciplineById(Integer.parseInt(disciplineIds[j]));
+                    if (discipline.getId() != 0) disciplinesList.add(discipline);
+                }
+
+                if (disciplinesList.isEmpty()) status = "3";
+                else {
+                    List<DisciplineIncomingDto> disciplineDtos = DisciplineDtoMapper.INSTANCE.mapToDtoIncoming(disciplinesList);
+
+                    if (duration == null) duration = "N недель";
+
+                    TermIncomingDto termDto = new TermIncomingDto();
+                    termDto.setDuration(duration);
+                    termDto.setDisciplines(disciplineDtos);
+                    createTerm(termDto);
+                    status = "1"; //okay
                 }
             }
-            List<DisciplineIncomingDto> disciplineDtos = DisciplineDtoMapper.INSTANCE.mapToDtoIncoming(disciplinesList);
-            if (duration == null) duration = "N недель";
-
-            TermIncomingDto termDto = new TermIncomingDto();
-            termDto.setDuration(duration);
-            termDto.setDisciplines(disciplineDtos);
-            createTerm(termDto);
-            status = "1"; //okay
-        }
+        } else status = "0"; // no disciplines provided
         return status;
     }
 
