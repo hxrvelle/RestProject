@@ -28,14 +28,19 @@ public class TermErrorResponses {
         resp.getWriter().write("No disciplines for this term");
     }
 
-    public void noTermName(HttpServletResponse resp) throws IOException {
+    public void noDisciplinesProvided(HttpServletResponse resp) throws IOException {
         e.errorResponse(resp);
-        resp.getWriter().write("No term name provided");
+        resp.getWriter().write("No disciplines provided");
     }
 
     public void invalidTermId(HttpServletResponse resp) throws IOException {
         e.errorResponse(resp);
         resp.getWriter().write("Invalid term ID. Should be a type of number");
+    }
+
+    public void invalidDisciplineId(HttpServletResponse resp) throws IOException {
+        e.errorResponse(resp);
+        resp.getWriter().write("Invalid discipline ID(s). Should be a type of number");
     }
 
     public void invalidRequest(HttpServletResponse resp) throws IOException {

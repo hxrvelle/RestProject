@@ -1,6 +1,6 @@
 package org.example.repository.impl;
 
-import org.example.db.ConnectionManagerImpl;
+import org.example.db.ConnectionManager;
 import org.example.model.Discipline;
 import org.example.model.Term;
 import org.example.repository.DisciplineRepo;
@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DisciplineRepoImpl implements DisciplineRepo {
-    private final ConnectionManagerImpl connectionManager = new ConnectionManagerImpl();
+    private final ConnectionManager connectionManager = new ConnectionManager();
     private String query;
     @Override
     public List<Discipline> getAllActiveDisciplines() {
         List<Discipline> disciplines = new ArrayList<>();
         query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline LEFT JOIN term_discipline ON discipline.id = term_discipline.id_discipline LEFT JOIN term ON term.id = term_discipline.id_term WHERE discipline.status = 1;";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -70,7 +70,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         List<Term> terms = new ArrayList<>();
         query = "SELECT term.* FROM students.term JOIN term_discipline on term_discipline.id_term = term.id JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE discipline.id ='" + id + "';";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -98,7 +98,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline LEFT JOIN term_discipline ON discipline.id = term_discipline.id_discipline LEFT JOIN term ON term.id = term_discipline.id_term WHERE discipline.id ='" + id + "';";
 
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -126,7 +126,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     public void createDiscipline(Discipline discipline) {
         query = "INSERT INTO `discipline` (`discipline`) VALUES ('" + discipline.getDiscipline() + "');";
         try (
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection)
         ) {
             connectionManager.updateConnect(statement, query);
@@ -139,7 +139,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     public void modifyDiscipline(Discipline discipline, int id) {
         query = "UPDATE `students`.`discipline` SET `discipline` = '" + discipline.getDiscipline() + "' WHERE (`id` = '" + id + "');";
         try (
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection)
         ) {
             connectionManager.updateConnect(statement, query);
@@ -152,7 +152,7 @@ public class DisciplineRepoImpl implements DisciplineRepo {
     public void deleteDiscipline(int id) {
         query = "UPDATE `discipline` SET `status` = '0' WHERE (`id` ='" + id + "');";
         try (
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection)
         ) {
             connectionManager.voidConnect(statement, query);

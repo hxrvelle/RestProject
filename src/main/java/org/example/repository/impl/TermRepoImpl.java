@@ -1,6 +1,6 @@
 package org.example.repository.impl;
 
-import org.example.db.ConnectionManagerImpl;
+import org.example.db.ConnectionManager;
 import org.example.model.Discipline;
 import org.example.model.Term;
 import org.example.repository.TermRepo;
@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TermRepoImpl implements TermRepo {
-    private final ConnectionManagerImpl connectionManager = new ConnectionManagerImpl();
+    private final ConnectionManager connectionManager = new ConnectionManager();
     private String query;
     @Override
     public List<Term> getAllActiveTerm() {
         List<Term> terms = new ArrayList<>();
         query = "SELECT term.id, term.term, term.duration, term.status, discipline.id, discipline.discipline, discipline.status FROM term LEFT JOIN term_discipline ON term.id = term_discipline.id_term LEFT JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE term.status = 1;";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -69,7 +69,7 @@ public class TermRepoImpl implements TermRepo {
         List<Discipline> disciplines = new ArrayList<>();
         query = "SELECT discipline.* FROM students.discipline JOIN term_discipline on term_discipline.id_discipline = discipline.id JOIN term ON term.id = term_discipline.id_term WHERE term.id ='" + id + "';";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -96,7 +96,7 @@ public class TermRepoImpl implements TermRepo {
         query = "SELECT term.id, term.term, term.duration, term.status, discipline.id, discipline.discipline, discipline.status FROM term LEFT JOIN term_discipline ON term.id = term_discipline.id_term LEFT JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE term.id ='" + id + "';";
 
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -111,7 +111,6 @@ public class TermRepoImpl implements TermRepo {
                 discipline.setDiscipline(rs.getString("discipline.discipline"));
                 discipline.setStatus(rs.getInt("discipline.status"));
                 disciplines.add(discipline);
-                disciplines.add(discipline);
 
                 term.setDisciplines(disciplines);
             }
@@ -123,7 +122,38 @@ public class TermRepoImpl implements TermRepo {
 
     @Override
     public void createTerm(Term term) {
+        String query1 = "SELECT term FROM term ORDER BY id DESC LIMIT 1;";
+        String lastTermName = "";
+        try(
+                Connection connection = ConnectionManager.connection();
+                Statement statement = connectionManager.statement(connection);
+                ResultSet rs = connectionManager.connect(statement, query1)
+        ) {
+            while (rs.next()) {
+                lastTermName = rs.getString("term");
+            }
+            String[] partsOfLastName = lastTermName.split(" ");
+            int numOfTerm = Integer.parseInt(partsOfLastName[1]);
+            numOfTerm++;
 
+            String query2 = "INSERT INTO `term` (`term`, `duration`) VALUES ('Семестр " + numOfTerm + "', '" + term.getDuration() + "');";
+            connectionManager.updateConnect(statement, query2);
+
+            String query3 = "SELECT id FROM term ORDER BY id DESC LIMIT 1;";
+            ResultSet rs1 = connectionManager.connect(statement, query3);
+            int newTermId = 0;
+            while (rs1.next()) {
+                newTermId = rs1.getInt("id");
+            }
+
+            for (int i = 0; i < term.getDisciplines().size(); i++) {
+                int disciplineId = term.getDisciplines().get(i).getId();
+                String query4 = "INSERT INTO `term_discipline` (`id_term`, `id_discipline`) VALUES ('" + newTermId + "', '" + disciplineId + "');";
+                connectionManager.updateConnect(statement, query4);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

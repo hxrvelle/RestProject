@@ -1,5 +1,6 @@
 package org.example.service.impl;
 
+import org.example.controller.dto.DisciplineIncomingDto;
 import org.example.controller.dto.DisciplineOutgoingDto;
 import org.example.controller.dto.TermIncomingDto;
 import org.example.controller.dto.TermOutgoingDto;
@@ -7,18 +8,17 @@ import org.example.controller.mapper.DisciplineDtoMapper;
 import org.example.controller.mapper.TermDtoMapper;
 import org.example.model.Discipline;
 import org.example.model.Term;
+import org.example.repository.impl.DisciplineRepoImpl;
 import org.example.repository.impl.TermRepoImpl;
 import org.example.service.TermService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TermServiceImpl implements TermService {
-    private final TermRepoImpl termRepo;
-
-    public TermServiceImpl(TermRepoImpl termRepo) {
-        this.termRepo = termRepo;
-    }
+    private final TermRepoImpl termRepo = new TermRepoImpl();
+    private final DisciplineRepoImpl disciplineRepo = new DisciplineRepoImpl();
 
     @Override
     public List<TermOutgoingDto> getAllActiveTerm() {
@@ -61,7 +61,15 @@ public class TermServiceImpl implements TermService {
 
     @Override
     public void createTerm(TermIncomingDto termDto) {
-
+        Term term;
+        List<Discipline> disciplines = new ArrayList<>();
+        for (int i = 0; i < termDto.getDisciplines().size(); i++) {
+            disciplines.add(DisciplineDtoMapper.INSTANCE.mapToEntity(termDto.getDisciplines().get(i)));
+        }
+        term = TermDtoMapper.INSTANCE.mapToEntity(termDto);
+        term.getDisciplines().clear();
+        term.setDisciplines(disciplines);
+        termRepo.createTerm(term);
     }
 
     @Override
@@ -106,8 +114,36 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public String createTermCheck(String term) {
-        return null;
+    public String createTermCheck(String disciplines, String duration) {
+        String status = "";
+
+        String[] disciplineIds = disciplines.split(",");
+
+        for (int i = 0; i < disciplineIds.length; i++) {
+            if (!disciplineIds[i].matches("\\d+")) disciplineIds[i] = "0";
+        }
+
+        if (disciplineIds.length == 0) status = "0"; // no disciplines provided
+        else {
+            List<DisciplineIncomingDto> disciplineList = new ArrayList<>();
+
+            List<Discipline> disciplinesList = new ArrayList<>();
+            for (int j = 0; j < disciplineIds.length; j++) {
+                Discipline discipline = disciplineRepo.getDisciplineById(Integer.parseInt(disciplineIds[j]));
+                if (discipline.getId() != 0) {
+                    disciplinesList.add(discipline);
+                }
+            }
+            List<DisciplineIncomingDto> disciplineDtos = DisciplineDtoMapper.INSTANCE.mapToDtoIncoming(disciplinesList);
+            if (duration == null) duration = "N недель";
+
+            TermIncomingDto termDto = new TermIncomingDto();
+            termDto.setDuration(duration);
+            termDto.setDisciplines(disciplineDtos);
+            createTerm(termDto);
+            status = "1"; //okay
+        }
+        return status;
     }
 
     @Override

@@ -22,7 +22,7 @@ public interface TermService {
     void deleteTerm(int id);
 
     String getTermsCheck(String[] path);
-    String createTermCheck(String term);
+    String createTermCheck(String disciplines, String duration);
     String modifyDisciplineCheck(String[] path, String discipline);
     String deleteDisciplineCheck(String[] path);
 }

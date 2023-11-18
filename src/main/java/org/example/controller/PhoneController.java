@@ -16,8 +16,7 @@ import java.io.IOException;
 @WebServlet(name = "PhoneController", urlPatterns = "/phones/*")
 public class PhoneController extends HttpServlet {
     Gson gson = new Gson();
-    private final PhoneRepoImpl phoneRepo = new PhoneRepoImpl();
-    private final PhoneServiceImpl service = new PhoneServiceImpl(phoneRepo);
+    private final PhoneServiceImpl service = new PhoneServiceImpl();
     private final SuccessResponse success = new SuccessResponse();
     private final StudentErrorResponses studentError = new StudentErrorResponses();
     private final PhoneErrorResponses error = new PhoneErrorResponses();

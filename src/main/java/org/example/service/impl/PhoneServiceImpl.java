@@ -13,12 +13,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class PhoneServiceImpl implements PhoneService {
-    private final PhoneRepoImpl phoneRepo;
+    private final PhoneRepoImpl phoneRepo = new PhoneRepoImpl();
     private final StudentRepoImpl studentRepo = new StudentRepoImpl();
-
-    public PhoneServiceImpl(PhoneRepoImpl phoneRepo) {
-        this.phoneRepo = phoneRepo;
-    }
 
     @Override
     public List<PhoneOutgoingDto> getStudentPhones(int id) {

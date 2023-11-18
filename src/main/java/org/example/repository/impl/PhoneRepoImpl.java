@@ -1,6 +1,6 @@
 package org.example.repository.impl;
 
-import org.example.db.ConnectionManagerImpl;
+import org.example.db.ConnectionManager;
 import org.example.model.Phone;
 import org.example.repository.PhoneRepo;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhoneRepoImpl implements PhoneRepo {
-    private final ConnectionManagerImpl connectionManager = new ConnectionManagerImpl();
+    private final ConnectionManager connectionManager = new ConnectionManager();
     private String query;
 
     @Override
@@ -20,7 +20,7 @@ public class PhoneRepoImpl implements PhoneRepo {
 
         query = "SELECT * FROM students.phone WHERE id ='" + id + "';";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -41,7 +41,7 @@ public class PhoneRepoImpl implements PhoneRepo {
 
         query = "SELECT * FROM students.phone WHERE id_student ='" + id + "';";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -64,7 +64,7 @@ public class PhoneRepoImpl implements PhoneRepo {
         query = "INSERT INTO `phone` (`id_student`, `phone`) VALUES ('" +
                 phone.getStudentId() + "', '" + phone.getPhoneNumber() + "');";
         try (
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection)
         ) {
             connectionManager.updateConnect(statement, query);
@@ -77,7 +77,7 @@ public class PhoneRepoImpl implements PhoneRepo {
     public void updateStudentPhone(int id, Phone phone) {
         query = "UPDATE `students`.`phone` SET `phone` = '" + phone.getPhoneNumber() + "' WHERE (`id` ='" + id + "');";
         try (
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection)
         ) {
             connectionManager.updateConnect(statement, query);
@@ -90,7 +90,7 @@ public class PhoneRepoImpl implements PhoneRepo {
     public void deleteStudentPhone(int id) {
         query = "DELETE FROM `students`.`phone` WHERE (`id` = '" + id + "');";
         try (
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection)
         ) {
             connectionManager.voidConnect(statement, query);

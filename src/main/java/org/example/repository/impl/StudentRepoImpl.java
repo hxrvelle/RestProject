@@ -1,6 +1,6 @@
 package org.example.repository.impl;
 
-import org.example.db.ConnectionManagerImpl;
+import org.example.db.ConnectionManager;
 import org.example.model.Phone;
 import org.example.model.Student;
 import org.example.repository.StudentRepo;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentRepoImpl implements StudentRepo {
-    private final ConnectionManagerImpl connectionManager = new ConnectionManagerImpl();
+    private final ConnectionManager connectionManager = new ConnectionManager();
     private String query;
 
     @Override
@@ -20,7 +20,7 @@ public class StudentRepoImpl implements StudentRepo {
         List<Student> students = new ArrayList<>();
         query = "SELECT * FROM student LEFT JOIN phone ON phone.id_student = student.id WHERE student.status = 1;";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -35,6 +35,7 @@ public class StudentRepoImpl implements StudentRepo {
                         Phone phone = new Phone();
                         phone.setId(rs.getInt("phone.id"));
                         phone.setPhoneNumber(rs.getString("phone"));
+                        phone.setStudentId(rs.getInt("phone.id_student"));
                         student.getPhoneNumbers().add(phone);
                         break;
                     }
@@ -53,6 +54,7 @@ public class StudentRepoImpl implements StudentRepo {
                     Phone phone = new Phone();
                     phone.setId(rs.getInt("phone.id"));
                     phone.setPhoneNumber(rs.getString("phone"));
+                    phone.setStudentId(rs.getInt("phone.id_student"));
                     phoneNumbers.add(phone);
 
                     student.setPhoneNumbers(phoneNumbers);
@@ -71,7 +73,7 @@ public class StudentRepoImpl implements StudentRepo {
         ArrayList<Phone> phoneNumbers = new ArrayList<>();
         query = "SELECT * FROM student LEFT JOIN phone ON phone.id_student = student.id WHERE student.id ='" + id + "';";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
                 ResultSet rs = connectionManager.connect(statement, query)
         ) {
@@ -86,6 +88,7 @@ public class StudentRepoImpl implements StudentRepo {
                 Phone phone = new Phone();
                 phone.setId(rs.getInt("phone.id"));
                 phone.setPhoneNumber(rs.getString("phone"));
+                phone.setStudentId(rs.getInt("phone.id_student"));
                 phoneNumbers.add(phone);
 
                 student.setPhoneNumbers(phoneNumbers);
@@ -104,7 +107,7 @@ public class StudentRepoImpl implements StudentRepo {
                 student.getGroup() + "', '" +
                 student.getDate() + "');";
         try (
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection)
         ) {
             connectionManager.updateConnect(statement, query);
@@ -121,7 +124,7 @@ public class StudentRepoImpl implements StudentRepo {
                 student.getGroup() + "', `date` = '" +
                 student.getDate() + "' WHERE (`id` ='" + id + "');";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
         ) {
             connectionManager.updateConnect(statement, query);
@@ -134,7 +137,7 @@ public class StudentRepoImpl implements StudentRepo {
     public void deleteStudent(int id) {
         query = "UPDATE `student` SET `status` = '0' WHERE (`id` ='" + id + "');";
         try(
-                Connection connection = connectionManager.connection();
+                Connection connection = ConnectionManager.connection();
                 Statement statement = connectionManager.statement(connection);
         ) {
             connectionManager.voidConnect(statement, query);

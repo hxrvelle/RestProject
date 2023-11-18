@@ -16,8 +16,7 @@ import java.io.IOException;
 @WebServlet(name = "TermController", urlPatterns = "/terms/*")
 public class TermController extends HttpServlet {
     Gson gson = new Gson();
-    private final TermRepoImpl termRepo = new TermRepoImpl();
-    private final TermServiceImpl service = new TermServiceImpl(termRepo);
+    private final TermServiceImpl service = new TermServiceImpl();
     private final SuccessResponse success = new SuccessResponse();
     private final TermErrorResponses error = new TermErrorResponses();
 
@@ -48,5 +47,16 @@ public class TermController extends HttpServlet {
             success.successResponse(resp, 200);
             resp.getWriter().write(gson.toJson(service.getAllActiveTerm()));
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String disciplines = req.getParameter("disciplines");
+        String duration = req.getParameter("duration");
+
+        String status = service.createTermCheck(disciplines, duration);
+
+        if (status.equals("0")) error.noDisciplines(resp);
+        if (status.equals("1")) success.successResponse(resp, 201);
     }
 }

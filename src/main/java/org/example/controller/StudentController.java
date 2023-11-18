@@ -15,8 +15,7 @@ import java.io.IOException;
 @WebServlet(name = "StudentController", urlPatterns = "/students/*")
 public class StudentController extends HttpServlet {
     Gson gson = new Gson();
-    private final StudentRepoImpl studentRepo = new StudentRepoImpl();
-    private final StudentServiceImpl service = new StudentServiceImpl(studentRepo);
+    private final StudentServiceImpl service = new StudentServiceImpl();
     private final StudentErrorResponses error = new StudentErrorResponses();
     private final SuccessResponse success = new SuccessResponse();
 

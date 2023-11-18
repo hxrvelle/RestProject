@@ -15,8 +15,7 @@ import java.io.IOException;
 @WebServlet(name = "DisciplineController", urlPatterns = "/disciplines/*")
 public class DisciplineController extends HttpServlet {
     Gson gson = new Gson();
-    private final DisciplineRepoImpl disciplineRepo = new DisciplineRepoImpl();
-    private final DisciplineServiceImpl service = new DisciplineServiceImpl(disciplineRepo);
+    private final DisciplineServiceImpl service = new DisciplineServiceImpl();
     private final SuccessResponse success = new SuccessResponse();
     private final DisciplineErrorResponses error = new DisciplineErrorResponses();
     @Override

@@ -15,7 +15,9 @@ public interface DisciplineDtoMapper {
 
     @Mapping(target = "id", source = "id")
     DisciplineOutgoingDto mapToDto(Discipline entity);
+    DisciplineIncomingDto mapToDtoIncoming(Discipline entity);
     Discipline mapToEntity(DisciplineIncomingDto dto);
     List<DisciplineOutgoingDto> mapToDtoList(List<Discipline> entities);
+    List<DisciplineIncomingDto> mapToDtoIncoming(List<Discipline> entities);
     List<Discipline> mapToEntityList(List<DisciplineIncomingDto> dtos);
 }

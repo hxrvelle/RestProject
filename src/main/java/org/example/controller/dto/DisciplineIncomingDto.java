@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class DisciplineIncomingDto {
+    private int id;
     private String discipline;
     private int status;
     private List<TermIncomingDto> terms;
@@ -11,10 +12,19 @@ public class DisciplineIncomingDto {
     public DisciplineIncomingDto() {
     }
 
-    public DisciplineIncomingDto(String discipline, int status, List<TermIncomingDto> terms) {
+    public DisciplineIncomingDto(int id, String discipline, int status, List<TermIncomingDto> terms) {
+        this.id = id;
         this.discipline = discipline;
         this.status = status;
         this.terms = terms;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDiscipline() {
@@ -48,6 +58,7 @@ public class DisciplineIncomingDto {
 
         DisciplineIncomingDto that = (DisciplineIncomingDto) o;
 
+        if (id != that.id) return false;
         if (status != that.status) return false;
         if (!Objects.equals(discipline, that.discipline)) return false;
         return Objects.equals(terms, that.terms);
@@ -55,7 +66,8 @@ public class DisciplineIncomingDto {
 
     @Override
     public int hashCode() {
-        int result = discipline != null ? discipline.hashCode() : 0;
+        int result = id;
+        result = 31 * result + (discipline != null ? discipline.hashCode() : 0);
         result = 31 * result + status;
         result = 31 * result + (terms != null ? terms.hashCode() : 0);
         return result;
@@ -64,7 +76,8 @@ public class DisciplineIncomingDto {
     @Override
     public String toString() {
         return "DisciplineIncomingDto{" +
-                "discipline='" + discipline + '\'' +
+                "id=" + id +
+                ", discipline='" + discipline + '\'' +
                 ", status=" + status +
                 ", terms=" + terms +
                 '}';

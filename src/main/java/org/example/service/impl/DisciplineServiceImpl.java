@@ -14,11 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DisciplineServiceImpl implements DisciplineService {
-    private final DisciplineRepoImpl disciplineRepo;
-
-    public DisciplineServiceImpl(DisciplineRepoImpl disciplineRepo) {
-        this.disciplineRepo = disciplineRepo;
-    }
+    private final DisciplineRepoImpl disciplineRepo = new DisciplineRepoImpl();
 
     @Override
     public List<DisciplineOutgoingDto> getAllActiveDisciplines() {

@@ -5,11 +5,11 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class ConnectionManagerImpl {
+public class ConnectionManager {
 
-    public String connectToDb() throws IOException {
+    private static String connectToDb() throws IOException {
         Properties properties = new Properties();
-        InputStream in = getClass().getClassLoader().getResourceAsStream("db.properties");
+        InputStream in = ConnectionManager.class.getClassLoader().getResourceAsStream("db.properties");
         properties.load(in);
         assert in != null;
         in.close();
@@ -21,7 +21,7 @@ public class ConnectionManagerImpl {
         return url + "?user=" + username + "&password=" + password;
     }
 
-    public Connection connection() throws ClassNotFoundException, IOException, SQLException {
+    public static Connection connection() throws ClassNotFoundException, IOException, SQLException {
         Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(connectToDb());
     }
