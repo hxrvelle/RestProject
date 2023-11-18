@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DisciplineRepoImpl implements DisciplineRepo {
-    private final ConnectionManager connectionManager = new ConnectionManager();
     private String query;
     @Override
     public List<Discipline> getAllActiveDisciplines() {
@@ -20,8 +19,8 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         query = "SELECT discipline.id, discipline.discipline, discipline.status, term.id, term.term, term.duration, term.status FROM discipline LEFT JOIN term_discipline ON discipline.id = term_discipline.id_discipline LEFT JOIN term ON term.id = term_discipline.id_term WHERE discipline.status = 1;";
         try(
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection);
-                ResultSet rs = connectionManager.connect(statement, query)
+                Statement statement = connection.createStatement();
+                ResultSet rs = ConnectionManager.connect(statement, query)
         ) {
             while (rs.next()) {
                 int disciplineId = rs.getInt("id");
@@ -71,8 +70,8 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         query = "SELECT term.* FROM students.term JOIN term_discipline on term_discipline.id_term = term.id JOIN discipline ON discipline.id = term_discipline.id_discipline WHERE discipline.id ='" + id + "';";
         try(
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection);
-                ResultSet rs = connectionManager.connect(statement, query)
+                Statement statement = connection.createStatement();
+                ResultSet rs = ConnectionManager.connect(statement, query)
         ) {
             while (rs.next()) {
                 Term term = new Term();
@@ -99,8 +98,8 @@ public class DisciplineRepoImpl implements DisciplineRepo {
 
         try(
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection);
-                ResultSet rs = connectionManager.connect(statement, query)
+                Statement statement = connection.createStatement();
+                ResultSet rs = ConnectionManager.connect(statement, query)
         ) {
             while (rs.next()){
                 discipline.setId(rs.getInt("discipline.id"));
@@ -127,9 +126,9 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         query = "INSERT INTO `discipline` (`discipline`) VALUES ('" + discipline.getDiscipline() + "');";
         try (
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection)
+                Statement statement = connection.createStatement()
         ) {
-            connectionManager.updateConnect(statement, query);
+            ConnectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,9 +139,9 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         query = "UPDATE `students`.`discipline` SET `discipline` = '" + discipline.getDiscipline() + "' WHERE (`id` = '" + id + "');";
         try (
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection)
+                Statement statement = connection.createStatement()
         ) {
-            connectionManager.updateConnect(statement, query);
+            ConnectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -153,9 +152,9 @@ public class DisciplineRepoImpl implements DisciplineRepo {
         query = "UPDATE `discipline` SET `status` = '0' WHERE (`id` ='" + id + "');";
         try (
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection)
+                Statement statement = connection.createStatement()
         ) {
-            connectionManager.voidConnect(statement, query);
+            ConnectionManager.voidConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }

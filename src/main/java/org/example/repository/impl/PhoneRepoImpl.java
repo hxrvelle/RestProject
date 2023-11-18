@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhoneRepoImpl implements PhoneRepo {
-    private final ConnectionManager connectionManager = new ConnectionManager();
     private String query;
 
     @Override
@@ -21,8 +20,8 @@ public class PhoneRepoImpl implements PhoneRepo {
         query = "SELECT * FROM students.phone WHERE id ='" + id + "';";
         try(
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection);
-                ResultSet rs = connectionManager.connect(statement, query)
+                Statement statement = connection.createStatement();
+                ResultSet rs = ConnectionManager.connect(statement, query)
         ) {
             while (rs.next()) {
                 phone.setId(rs.getInt("id"));
@@ -42,8 +41,8 @@ public class PhoneRepoImpl implements PhoneRepo {
         query = "SELECT * FROM students.phone WHERE id_student ='" + id + "';";
         try(
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection);
-                ResultSet rs = connectionManager.connect(statement, query)
+                Statement statement = connection.createStatement();
+                ResultSet rs = ConnectionManager.connect(statement, query)
         ) {
             while (rs.next()) {
                 Phone phone = new Phone();
@@ -65,9 +64,9 @@ public class PhoneRepoImpl implements PhoneRepo {
                 phone.getStudentId() + "', '" + phone.getPhoneNumber() + "');";
         try (
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection)
+                Statement statement = connection.createStatement()
         ) {
-            connectionManager.updateConnect(statement, query);
+            ConnectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,9 +77,9 @@ public class PhoneRepoImpl implements PhoneRepo {
         query = "UPDATE `students`.`phone` SET `phone` = '" + phone.getPhoneNumber() + "' WHERE (`id` ='" + id + "');";
         try (
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection)
+                Statement statement = connection.createStatement()
         ) {
-            connectionManager.updateConnect(statement, query);
+            ConnectionManager.updateConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,9 +90,9 @@ public class PhoneRepoImpl implements PhoneRepo {
         query = "DELETE FROM `students`.`phone` WHERE (`id` = '" + id + "');";
         try (
                 Connection connection = ConnectionManager.connection();
-                Statement statement = connectionManager.statement(connection)
+                Statement statement = connection.createStatement()
         ) {
-            connectionManager.voidConnect(statement, query);
+            ConnectionManager.voidConnect(statement, query);
         } catch (Exception e) {
             e.printStackTrace();
         }
