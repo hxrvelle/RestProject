@@ -19,8 +19,12 @@ public class StudentController extends HttpServlet {
     private final StudentErrorResponses error = new StudentErrorResponses();
     private final SuccessResponse success = new SuccessResponse();
 
+    public StudentController() {
+        super();
+    }
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.getStudentsCheck(path);
@@ -40,7 +44,7 @@ public class StudentController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String surname = req.getParameter("surname");
         String name = req.getParameter("name");
         String group = req.getParameter("group");

@@ -165,7 +165,7 @@ public class TermRepoImpl implements TermRepo {
     }
 
     @Override
-    public void modifyTerm(Term term, int termId) throws SQLException {
+    public void modifyTerm(Term term, int termId) {
         query = "UPDATE `term` SET `duration` = '" + term.getDuration() + "' WHERE (`id` ='" + termId + "');";
         ResultSet rs = null;
         try(
@@ -198,7 +198,11 @@ public class TermRepoImpl implements TermRepo {
             e.printStackTrace();
         } finally {
             assert rs != null;
-            rs.close();
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

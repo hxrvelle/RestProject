@@ -20,8 +20,11 @@ public class PhoneController extends HttpServlet {
     private final SuccessResponse success = new SuccessResponse();
     private final StudentErrorResponses studentError = new StudentErrorResponses();
     private final PhoneErrorResponses error = new PhoneErrorResponses();
+    public PhoneController() {
+        super();
+    }
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.getStudentPhonesCheck(path);

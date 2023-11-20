@@ -5,7 +5,6 @@ import org.example.controller.dto.StudentIncomingDto;
 import org.example.controller.dto.StudentOutgoingDto;
 import org.example.controller.mapper.PhoneDtoMapper;
 import org.example.controller.mapper.StudentDtoMapper;
-import org.example.db.ConnectionManager;
 import org.example.model.Phone;
 import org.example.model.Student;
 import org.example.repository.impl.StudentRepoImpl;
@@ -95,27 +94,33 @@ public class StudentServiceImpl implements StudentService {
     public String createStudentCheck(String surname, String name, String group, String date) {
         String status;
 
-        String[] dateParts = date.split("-");
-        String year = dateParts[0];
-        String month = dateParts[1];
-        String day = dateParts[2];
+        String year;
+        String month;
+        String day;
+        if (date != null) {
+            String[] dateParts = date.split("-");
+            year = dateParts[0];
+            month = dateParts[1];
+            day = dateParts[2];
 
-        StudentIncomingDto student = new StudentIncomingDto();
+            StudentIncomingDto student = new StudentIncomingDto();
 
-        if (surname == null || name == null || group == null || date == null) {
-            status = "0";
-        } else if (year.length() != 4 || month.length() < 1 || month.length() > 2 || day.length() < 1 || day.length() > 2) {
-            status = "1";
+            if (surname == null || name == null || group == null) {
+                status = "0";
+            } else if (year.length() != 4 || month.length() < 1 || month.length() > 2 || day.length() < 1 || day.length() > 2) {
+                status = "1";
+            } else {
+                student.setSurname(surname);
+                student.setName(name);
+                student.setGroup(group);
+                student.setDate(Date.valueOf(date));
+
+                createStudent(student);
+                status = "2";
+            }
         } else {
-            student.setSurname(surname);
-            student.setName(name);
-            student.setGroup(group);
-            student.setDate(Date.valueOf(date));
-
-            createStudent(student);
-            status = "2";
+            status = "0";
         }
-
         return status;
     }
 

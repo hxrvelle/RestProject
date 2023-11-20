@@ -60,7 +60,7 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public void createTerm(TermIncomingDto termDto) throws SQLException {
+    public void createTerm(TermIncomingDto termDto) {
         Term term;
         List<Discipline> disciplines = new ArrayList<>();
         for (int i = 0; i < termDto.getDisciplines().size(); i++) {
@@ -73,7 +73,7 @@ public class TermServiceImpl implements TermService {
     }
 
     @Override
-    public void modifyTerm(TermIncomingDto termDto, int id) throws SQLException {
+    public void modifyTerm(TermIncomingDto termDto, int id) {
         Term term;
         List<Discipline> disciplines = new ArrayList<>();
         for (int i = 0; i < termDto.getDisciplines().size(); i++) {

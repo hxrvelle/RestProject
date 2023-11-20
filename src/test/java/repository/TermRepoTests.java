@@ -122,7 +122,9 @@ public class TermRepoTests {
         Term term = termRepo.getTermById(1);
         term.setDuration("5 months");
 
-        assertDoesNotThrow(() -> termRepo.modifyTerm(term, 1));
+        termRepo.modifyTerm(term, 1);
+
+        assertEquals("5 months", termRepo.getTermById(1).getDuration());
     }
 
     @Test
