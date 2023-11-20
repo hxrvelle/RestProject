@@ -3,19 +3,20 @@ package org.example.service.impl;
 import org.example.controller.dto.PhoneIncomingDto;
 import org.example.controller.dto.PhoneOutgoingDto;
 import org.example.controller.mapper.PhoneDtoMapper;
-import org.example.db.ConnectionManager;
 import org.example.model.Phone;
 import org.example.repository.impl.PhoneRepoImpl;
 import org.example.repository.impl.StudentRepoImpl;
 import org.example.service.PhoneService;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 public class PhoneServiceImpl implements PhoneService {
-    private final PhoneRepoImpl phoneRepo = new PhoneRepoImpl();
-    private final StudentRepoImpl studentRepo = new StudentRepoImpl();
+    private PhoneRepoImpl phoneRepo;
+    private StudentRepoImpl studentRepo = new StudentRepoImpl();
+
+    public PhoneServiceImpl() {
+        phoneRepo = new PhoneRepoImpl();
+    }
 
     @Override
     public List<PhoneOutgoingDto> getStudentPhones(int id) {

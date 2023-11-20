@@ -1,7 +1,5 @@
 package service;
 
-import org.example.controller.dto.StudentIncomingDto;
-import org.example.controller.dto.StudentOutgoingDto;
 import org.example.controller.mapper.StudentDtoMapper;
 import org.example.model.Student;
 import org.example.repository.impl.StudentRepoImpl;
@@ -10,13 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.sql.Date;
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class StudentServiceTests {
     @InjectMocks
@@ -33,45 +30,43 @@ public class StudentServiceTests {
 
     @Test
     void getAllActiveStudentsTest() {
-        List<StudentOutgoingDto> studentList = studentService.getAllActiveStudents();
+        when(studentRepo.getAllActiveStudents()).thenReturn(new ArrayList<>());
+        studentService.getAllActiveStudents();
 
-        Mockito.when(mapper.mapToDtoList(studentRepo.getAllActiveStudents())).thenReturn(studentList);
-        Mockito.verify(studentRepo).getAllActiveStudents();
+        verify(studentRepo, atLeastOnce()).getAllActiveStudents();
     }
 
     @Test
     void getStudentByIdTest() {
         int id = 1;
-        StudentOutgoingDto student = studentService.getStudentById(id);
 
-        Mockito.when(mapper.mapToDto(studentRepo.getStudentById(id))).thenReturn(student);
-        Mockito.verify(studentRepo).getStudentById(id);
+        when(studentRepo.getStudentById(id)).thenReturn(new Student());
+        studentService.getStudentById(id);
+
+        verify(studentRepo, atLeastOnce()).getStudentById(id);
     }
 
     @Test
     void createStudentTest() {
-        String name = "Name";
-        String surname = "Surname";
-        String group = "Group";
-        String date = "2023-11-11";
+        studentService.createStudent(any());
 
-        StudentIncomingDto student = new StudentIncomingDto();
-        student.setSurname(surname);
-        student.setName(name);
-        student.setGroup(group);
-        student.setDate(Date.valueOf(date));
-
-        //studentService.createStudentCheck(surname, name, group, date);
-        studentService.createStudent(student);
-
-        Mockito.verify(studentRepo).createStudent(mapper.mapToEntity(student));
+        doNothing().when(studentRepo).createStudent(any());
+        verify(studentRepo, atLeastOnce()).createStudent(any());
     }
 
     @Test
     void modifyStudent() {
+        studentService.modifyStudent(anyInt(), any());
+
+        doNothing().when(studentRepo).modifyStudent(anyInt(), any());
+        verify(studentRepo, atLeastOnce()).modifyStudent(anyInt(), any());
     }
 
     @Test
     void deleteStudent() {
+        studentService.deleteStudent(anyInt());
+
+        doNothing().when(studentRepo).deleteStudent(anyInt());
+        verify(studentRepo, atLeastOnce()).deleteStudent(anyInt());
     }
 }

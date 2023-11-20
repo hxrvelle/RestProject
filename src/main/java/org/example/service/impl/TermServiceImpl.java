@@ -17,8 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TermServiceImpl implements TermService {
-    private final TermRepoImpl termRepo = new TermRepoImpl();
-    private final DisciplineRepoImpl disciplineRepo = new DisciplineRepoImpl();
+    private TermRepoImpl termRepo;
+    private DisciplineRepoImpl disciplineRepo = new DisciplineRepoImpl();
+
+    public TermServiceImpl() {
+        termRepo = new TermRepoImpl();
+    }
 
     @Override
     public List<TermOutgoingDto> getAllActiveTerm() {

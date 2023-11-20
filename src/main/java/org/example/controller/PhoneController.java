@@ -16,10 +16,10 @@ import java.io.IOException;
 @WebServlet(name = "PhoneController", urlPatterns = "/phones/*")
 public class PhoneController extends HttpServlet {
     Gson gson = new Gson();
-    private final PhoneServiceImpl service = new PhoneServiceImpl();
-    private final SuccessResponse success = new SuccessResponse();
-    private final StudentErrorResponses studentError = new StudentErrorResponses();
-    private final PhoneErrorResponses error = new PhoneErrorResponses();
+    private PhoneServiceImpl service = new PhoneServiceImpl();
+    private SuccessResponse success = new SuccessResponse();
+    private StudentErrorResponses studentError = new StudentErrorResponses();
+    private PhoneErrorResponses error = new PhoneErrorResponses();
     public PhoneController() {
         super();
     }

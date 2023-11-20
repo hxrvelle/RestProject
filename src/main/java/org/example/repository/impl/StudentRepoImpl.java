@@ -5,7 +5,6 @@ import org.example.model.Phone;
 import org.example.model.Student;
 import org.example.repository.StudentRepo;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;

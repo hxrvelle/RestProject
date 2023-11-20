@@ -3,7 +3,6 @@ package org.example.controller;
 import com.google.gson.Gson;
 import org.example.controller.responseHandlers.StudentErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
-import org.example.repository.impl.StudentRepoImpl;
 import org.example.service.impl.StudentServiceImpl;
 
 import javax.servlet.annotation.WebServlet;
@@ -15,12 +14,19 @@ import java.io.IOException;
 @WebServlet(name = "StudentController", urlPatterns = "/students/*")
 public class StudentController extends HttpServlet {
     Gson gson = new Gson();
-    private final StudentServiceImpl service = new StudentServiceImpl();
-    private final StudentErrorResponses error = new StudentErrorResponses();
-    private final SuccessResponse success = new SuccessResponse();
+    private StudentServiceImpl service;
+    private StudentErrorResponses error;
+    private SuccessResponse success;
 
     public StudentController() {
         super();
+    }
+
+    @Override
+    public void init() {
+        service = new StudentServiceImpl();
+        error = new StudentErrorResponses();
+        success = new SuccessResponse();
     }
 
     @Override
@@ -38,6 +44,8 @@ public class StudentController extends HttpServlet {
         if (status.equals("2")) error.noStudents(resp);
         if (status.equals("3")) {
             success.successResponse(resp, 200);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
             resp.getWriter().write(gson.toJson(service.getAllActiveStudents()));
         }
         if (status.equals("4")) error.invalidStudentId(resp);
@@ -58,7 +66,7 @@ public class StudentController extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
         String surname = req.getParameter("surname");
         String name = req.getParameter("name");
@@ -74,7 +82,7 @@ public class StudentController extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.deleteStudentCheck(path);

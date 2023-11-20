@@ -1,26 +1,25 @@
 package service;
 
-import org.example.controller.dto.PhoneIncomingDto;
-import org.example.controller.dto.PhoneOutgoingDto;
 import org.example.controller.mapper.PhoneDtoMapper;
-import org.example.model.Phone;
 import org.example.repository.impl.PhoneRepoImpl;
 import org.example.service.impl.PhoneServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
+import java.util.ArrayList;
+
+import static org.mockito.Mockito.*;
 
 public class PhoneServiceTests {
+    @InjectMocks
+    private PhoneServiceImpl phoneService;
     @Mock
     private PhoneRepoImpl phoneRepo;
     @Mock
-    private PhoneServiceImpl phoneService;
-    @Mock
-    PhoneDtoMapper mapper;
+    private PhoneDtoMapper mapper;
 
     @BeforeEach
     void setUp() {
@@ -30,21 +29,34 @@ public class PhoneServiceTests {
     @Test
     void getStudentPhonesTest() {
         int id = 1;
-        List<PhoneOutgoingDto> studentPhones = phoneService.getStudentPhones(id);
 
-        Mockito.when(mapper.mapToDtoList(phoneRepo.getStudentPhones(id))).thenReturn(studentPhones);
-        Mockito.verify(phoneRepo).getStudentPhones(id);
+        when(phoneRepo.getStudentPhones(id)).thenReturn(new ArrayList<>());
+        phoneService.getStudentPhones(id);
+
+        verify(phoneRepo, atLeastOnce()).getStudentPhones(id);
     }
 
     @Test
-    void addStudentPhone() {
+    void addStudentPhoneTest() {
+        phoneService.addStudentPhone(any());
+
+        doNothing().when(phoneRepo).addStudentPhone(any());
+        verify(phoneRepo, atLeastOnce()).addStudentPhone(any());
     }
 
     @Test
     void updateStudentPhone() {
+        phoneService.updateStudentPhone(anyInt(), any());
+
+        doNothing().when(phoneRepo).updateStudentPhone(anyInt(), any());
+        verify(phoneRepo, atLeastOnce()).updateStudentPhone(anyInt(), any());
     }
 
     @Test
     void deleteStudentPhone() {
+        phoneService.deleteStudentPhone(anyInt());
+
+        doNothing().when(phoneRepo).deleteStudentPhone(anyInt());
+        verify(phoneRepo, atLeastOnce()).deleteStudentPhone(anyInt());
     }
 }

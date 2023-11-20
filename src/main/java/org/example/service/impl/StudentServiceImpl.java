@@ -15,7 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentServiceImpl implements StudentService {
-    private final StudentRepoImpl studentRepoImpl = new StudentRepoImpl();
+    private StudentRepoImpl studentRepoImpl;
+
+    public StudentServiceImpl() {
+        studentRepoImpl = new StudentRepoImpl();
+    }
 
     @Override
     public List<StudentOutgoingDto> getAllActiveStudents() {
