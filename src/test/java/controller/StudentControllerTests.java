@@ -1,7 +1,6 @@
 package controller;
 
 import org.example.controller.StudentController;
-import org.example.controller.dto.StudentIncomingDto;
 import org.example.controller.dto.StudentOutgoingDto;
 import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.service.impl.StudentServiceImpl;
@@ -17,35 +16,28 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class StudentControllerTests {
+    @InjectMocks
+    private StudentController controller;
     @Mock
     private StudentServiceImpl service;
     @Mock
     private SuccessResponse success;
-    @Mock
-    private StudentIncomingDto student;
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     @Mock
     private PrintWriter writer;
-    @InjectMocks
-    private StudentController controller;
 
     @BeforeEach
     void setUp() {
         controller = new StudentController();
         service = new StudentServiceImpl();
         success = new SuccessResponse();
-        student = new StudentIncomingDto();
 
         MockitoAnnotations.openMocks(this);
         StringWriter stringWriter = new StringWriter();
@@ -114,7 +106,6 @@ public class StudentControllerTests {
     @Test
     void doDeleteTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
-
         when(service.deleteStudentCheck(any())).thenReturn("2");
 
         controller.doDelete(request, response);

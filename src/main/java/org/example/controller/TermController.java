@@ -15,12 +15,23 @@ import java.sql.SQLException;
 @WebServlet(name = "TermController", urlPatterns = "/terms/*")
 public class TermController extends HttpServlet {
     Gson gson = new Gson();
-    private final TermServiceImpl service = new TermServiceImpl();
-    private final SuccessResponse success = new SuccessResponse();
-    private final TermErrorResponses error = new TermErrorResponses();
+    private TermServiceImpl service;
+    private SuccessResponse success;
+    private TermErrorResponses error;
+
+    public TermController() {
+        super();
+    }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void init() {
+        service = new TermServiceImpl();
+        success = new SuccessResponse();
+        error = new TermErrorResponses();
+    }
+
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.getTermsCheck(path);
@@ -49,7 +60,7 @@ public class TermController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String disciplines = req.getParameter("disciplines");
         String duration = req.getParameter("duration");
 
@@ -66,7 +77,7 @@ public class TermController extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
         String disciplines = req.getParameter("disciplines");
         String duration = req.getParameter("duration");
@@ -87,7 +98,7 @@ public class TermController extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.deleteTermCheck(path);

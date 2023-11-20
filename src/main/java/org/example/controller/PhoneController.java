@@ -7,6 +7,7 @@ import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.repository.impl.PhoneRepoImpl;
 import org.example.service.impl.PhoneServiceImpl;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,13 +17,23 @@ import java.io.IOException;
 @WebServlet(name = "PhoneController", urlPatterns = "/phones/*")
 public class PhoneController extends HttpServlet {
     Gson gson = new Gson();
-    private PhoneServiceImpl service = new PhoneServiceImpl();
-    private SuccessResponse success = new SuccessResponse();
-    private StudentErrorResponses studentError = new StudentErrorResponses();
-    private PhoneErrorResponses error = new PhoneErrorResponses();
+    private PhoneServiceImpl service;
+    private SuccessResponse success;
+    private StudentErrorResponses studentError;
+    private PhoneErrorResponses error;
+
     public PhoneController() {
         super();
     }
+
+    @Override
+    public void init() {
+        service = new PhoneServiceImpl();
+        studentError = new StudentErrorResponses();
+        error = new PhoneErrorResponses();
+        success = new SuccessResponse();
+    }
+
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
@@ -40,12 +51,11 @@ public class PhoneController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
         String phoneNumber = req.getParameter("number");
 
-        String status;
-        status = service.addStudentPhoneCheck(path, phoneNumber);
+        String status = service.addStudentPhoneCheck(path, phoneNumber);
         if (status.equals("0")) studentError.noStudentId(resp);
         if (status.equals("1")) studentError.studentDoesntExist(resp);
         if (status.equals("2")) error.noPhone(resp);
@@ -54,7 +64,7 @@ public class PhoneController extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
         String phoneNumber = req.getParameter("number");
 
@@ -67,7 +77,7 @@ public class PhoneController extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.deleteStudentPhoneCheck(path);

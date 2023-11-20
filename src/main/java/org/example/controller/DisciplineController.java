@@ -2,10 +2,12 @@ package org.example.controller;
 
 import com.google.gson.Gson;
 import org.example.controller.responseHandlers.DisciplineErrorResponses;
+import org.example.controller.responseHandlers.TermErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
-import org.example.repository.impl.DisciplineRepoImpl;
 import org.example.service.impl.DisciplineServiceImpl;
+import org.example.service.impl.TermServiceImpl;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +17,23 @@ import java.io.IOException;
 @WebServlet(name = "DisciplineController", urlPatterns = "/disciplines/*")
 public class DisciplineController extends HttpServlet {
     Gson gson = new Gson();
-    private final DisciplineServiceImpl service = new DisciplineServiceImpl();
-    private final SuccessResponse success = new SuccessResponse();
-    private final DisciplineErrorResponses error = new DisciplineErrorResponses();
+    private DisciplineServiceImpl service;
+    private SuccessResponse success;
+    private DisciplineErrorResponses error;
+
+    public DisciplineController() {
+        super();
+    }
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void init() {
+        service = new DisciplineServiceImpl();
+        success = new SuccessResponse();
+        error = new DisciplineErrorResponses();
+    }
+
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.getDisciplinesCheck(path);
@@ -48,7 +62,7 @@ public class DisciplineController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String discipline = req.getParameter("discipline");
 
         String status = service.createDisciplineCheck(discipline);
@@ -57,7 +71,7 @@ public class DisciplineController extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
         String discipline = req.getParameter("discipline");
 
@@ -70,7 +84,7 @@ public class DisciplineController extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] path = req.getPathInfo().split("/");
 
         String status = service.deleteDisciplineCheck(path);
