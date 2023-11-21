@@ -3,6 +3,7 @@ package controller;
 import org.example.controller.DisciplineController;
 import org.example.controller.dto.DisciplineOutgoingDto;
 import org.example.controller.dto.TermOutgoingDto;
+import org.example.controller.responseHandlers.DisciplineErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.service.impl.DisciplineServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,8 @@ public class DisciplineControllerTests {
     @Mock
     private SuccessResponse success;
     @Mock
+    private DisciplineErrorResponses error;
+    @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
@@ -40,6 +43,7 @@ public class DisciplineControllerTests {
         controller = new DisciplineController();
         service = new DisciplineServiceImpl();
         success = new SuccessResponse();
+        error = new DisciplineErrorResponses();
 
         MockitoAnnotations.openMocks(this);
         StringWriter stringWriter = new StringWriter();
@@ -62,6 +66,21 @@ public class DisciplineControllerTests {
     }
 
     @Test
+    void doGetAllDisciplinesTestError_noDisciplines() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(service.getDisciplinesCheck(any())).thenReturn("8");
+        when(response.getWriter()).thenReturn(writer);
+
+        String[] path = {""};
+
+        service.getDisciplinesCheck(path);
+        controller.doGet(request, response);
+
+        verify(error, atLeastOnce()).noDisciplines(response);
+        verify(service, times(0)).getAllActiveDisciplines();
+    }
+
+    @Test
     void doGetDisciplineByIdTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
         when(service.getDisciplineById(1)).thenReturn(new DisciplineOutgoingDto());
@@ -72,6 +91,21 @@ public class DisciplineControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 200);
         verify(service, atLeastOnce()).getDisciplinesCheck(any());
+    }
+
+    @Test
+    void doGetDisciplineByIdTestError_disciplineDoesntExist() throws IOException {
+        when(request.getPathInfo()).thenReturn("/111");
+        when(service.getDisciplinesCheck(any())).thenReturn("00");
+        when(response.getWriter()).thenReturn(writer);
+
+        String[] path = {""};
+
+        service.getDisciplinesCheck(path);
+        controller.doGet(request, response);
+
+        verify(error, atLeastOnce()).diesciplineDoesntExist(response);
+        verify(service, times(0)).getDisciplineById(anyInt());
     }
 
     @Test
@@ -88,6 +122,21 @@ public class DisciplineControllerTests {
     }
 
     @Test
+    void doGetDisciplineTermsTestError_noTerms() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1");
+        when(service.getDisciplinesCheck(any())).thenReturn("4");
+        when(response.getWriter()).thenReturn(writer);
+
+        String[] path = {""};
+
+        service.getDisciplinesCheck(path);
+        controller.doGet(request, response);
+
+        verify(error, atLeastOnce()).noTerms(response);
+        verify(service, times(0)).getDisciplineTerms(anyInt());
+    }
+
+    @Test
     void doPostTest() throws IOException {
         when(request.getParameter("discipline")).thenReturn("Discipline");
         when(service.createDisciplineCheck(anyString())).thenReturn("1");
@@ -96,6 +145,17 @@ public class DisciplineControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 201);
         verify(service, atLeastOnce()).createDisciplineCheck(anyString());
+    }
+
+    @Test
+    void doPostTestError_noDisciplineName() throws IOException {
+        when(request.getParameter("discipline")).thenReturn("");
+        when(service.createDisciplineCheck(anyString())).thenReturn("0");
+
+        controller.doPost(request, response);
+
+        verify(error, atLeastOnce()).noDisciplineName(response);
+        verify(service, times(0)).createDiscipline(any());
     }
 
     @Test
@@ -111,7 +171,31 @@ public class DisciplineControllerTests {
     }
 
     @Test
-    void doDeleteCheck() throws IOException {
+    void doPutTestError_noDisciplineId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(request.getParameter("discipline")).thenReturn("Discipline");
+        when(service.modifyDisciplineCheck(any(), anyString())).thenReturn("0");
+
+        controller.doPut(request, response);
+
+        verify(error, atLeastOnce()).noDisciplineId(response);
+        verify(service, times(0)).modifyDiscipline(any(), anyInt());
+    }
+
+    @Test
+    void doPutTestError_disciplineDoesntExist() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1111");
+        when(request.getParameter("discipline")).thenReturn("Discipline");
+        when(service.modifyDisciplineCheck(any(), anyString())).thenReturn("1");
+
+        controller.doPut(request, response);
+
+        verify(error, atLeastOnce()).diesciplineDoesntExist(response);
+        verify(service, times(0)).modifyDiscipline(any(), anyInt());
+    }
+
+    @Test
+    void doDeleteTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
         when(service.deleteDisciplineCheck(any())).thenReturn("2");
 
@@ -119,5 +203,27 @@ public class DisciplineControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 200);
         verify(service, atLeastOnce()).deleteDisciplineCheck(any());
+    }
+
+    @Test
+    void doDeleteTestError_noDisciplineId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(service.deleteDisciplineCheck(any())).thenReturn("0");
+
+        controller.doDelete(request, response);
+
+        verify(error, atLeastOnce()).noDisciplineId(response);
+        verify(service, times(0)).deleteDiscipline(anyInt());
+    }
+
+    @Test
+    void doDeleteTestError_invalidDisciplineId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/aaa");
+        when(service.deleteDisciplineCheck(any())).thenReturn("3");
+
+        controller.doDelete(request, response);
+
+        verify(error, atLeastOnce()).invalidDisciplineId(response);
+        verify(service, times(0)).deleteDiscipline(anyInt());
     }
 }

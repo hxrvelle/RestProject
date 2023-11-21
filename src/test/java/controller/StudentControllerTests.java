@@ -2,6 +2,7 @@ package controller;
 
 import org.example.controller.StudentController;
 import org.example.controller.dto.StudentOutgoingDto;
+import org.example.controller.responseHandlers.StudentErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.service.impl.StudentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,8 @@ public class StudentControllerTests {
     @Mock
     private SuccessResponse success;
     @Mock
+    private StudentErrorResponses error;
+    @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
@@ -38,6 +41,7 @@ public class StudentControllerTests {
         controller = new StudentController();
         service = new StudentServiceImpl();
         success = new SuccessResponse();
+        error = new StudentErrorResponses();
 
         MockitoAnnotations.openMocks(this);
         StringWriter stringWriter = new StringWriter();
@@ -60,7 +64,22 @@ public class StudentControllerTests {
     }
 
     @Test
-    void doGetStudentById() throws IOException {
+    void doGetAllStudentsTestError_noStudents() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(service.getStudentsCheck(any())).thenReturn("2");
+        when(response.getWriter()).thenReturn(writer);
+
+        String[] path = {""};
+
+        service.getStudentsCheck(path);
+        controller.doGet(request, response);
+
+        verify(error, atLeastOnce()).noStudents(response);
+        verify(service, times(0)).getAllActiveStudents();
+    }
+
+    @Test
+    void doGetStudentByIdTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
         when(service.getStudentById(1)).thenReturn(new StudentOutgoingDto());
         when(service.getStudentsCheck(any())).thenReturn("1");
@@ -70,6 +89,36 @@ public class StudentControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 200);
         verify(service, atLeastOnce()).getStudentsCheck(any());
+    }
+
+    @Test
+    void doGetStudentByIdTestError_noStudentId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(service.getStudentsCheck(any())).thenReturn("0");
+        when(response.getWriter()).thenReturn(writer);
+
+        String[] path = {""};
+
+        service.getStudentsCheck(path);
+        controller.doGet(request, response);
+
+        verify(error, atLeastOnce()).noStudentId(response);
+        verify(service, times(0)).getStudentById(anyInt());
+    }
+
+    @Test
+    void doGetStudentByIdTestError_invalidStudentId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1111");
+        when(service.getStudentsCheck(any())).thenReturn("4");
+        when(response.getWriter()).thenReturn(writer);
+
+        String[] path = {""};
+
+        service.getStudentsCheck(path);
+        controller.doGet(request, response);
+
+        verify(error, atLeastOnce()).invalidStudentId(response);
+        verify(service, times(0)).getStudentById(anyInt());
     }
 
     @Test
@@ -85,6 +134,36 @@ public class StudentControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 201);
         verify(service, atLeastOnce()).createStudentCheck(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void doPostTestError_parametersMissing() throws IOException {
+        when(request.getParameter("surname")).thenReturn("");
+        when(request.getParameter("name")).thenReturn("");
+        when(request.getParameter("group")).thenReturn("");
+        when(request.getParameter("date")).thenReturn("");
+
+        when(service.createStudentCheck(anyString(), anyString(), anyString(), anyString())).thenReturn("0");
+
+        controller.doPost(request, response);
+
+        verify(error, atLeastOnce()).parametersMissing(response);
+        verify(service, times(0)).createStudent(any());
+    }
+
+    @Test
+    void doPostTestError_dateFormat() throws IOException {
+        when(request.getParameter("surname")).thenReturn("Surname");
+        when(request.getParameter("name")).thenReturn("Name");
+        when(request.getParameter("group")).thenReturn("Group");
+        when(request.getParameter("date")).thenReturn("12-11-2010");
+
+        when(service.createStudentCheck(anyString(), anyString(), anyString(), anyString())).thenReturn("1");
+
+        controller.doPost(request, response);
+
+        verify(error, atLeastOnce()).dateFormat(response);
+        verify(service, times(0)).createStudent(any());
     }
 
     @Test
@@ -104,6 +183,38 @@ public class StudentControllerTests {
     }
 
     @Test
+    void doPutTestError_noStudentId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(request.getParameter("surname")).thenReturn("Surname");
+        when(request.getParameter("name")).thenReturn("Name");
+        when(request.getParameter("group")).thenReturn("Group");
+        when(request.getParameter("date")).thenReturn("2023-10-10");
+
+        when(service.updateStudentCheck(any(), anyString(), anyString(), anyString(), anyString())).thenReturn("0");
+
+        controller.doPut(request, response);
+
+        verify(error, atLeastOnce()).noStudentId(response);
+        verify(service, times(0)).modifyStudent(anyInt(), any());
+    }
+
+    @Test
+    void doPutTestError_parametersMissing() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1");
+        when(request.getParameter("surname")).thenReturn("");
+        when(request.getParameter("name")).thenReturn("");
+        when(request.getParameter("group")).thenReturn("");
+        when(request.getParameter("date")).thenReturn("");
+
+        when(service.updateStudentCheck(any(), anyString(), anyString(), anyString(), anyString())).thenReturn("3");
+
+        controller.doPut(request, response);
+
+        verify(error, atLeastOnce()).noParameters(response);
+        verify(service, times(0)).modifyStudent(anyInt(), any());
+    }
+
+    @Test
     void doDeleteTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
         when(service.deleteStudentCheck(any())).thenReturn("2");
@@ -112,5 +223,27 @@ public class StudentControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 200);
         verify(service, atLeastOnce()).deleteStudentCheck(any());
+    }
+
+    @Test
+    void doDeleteTestError_noStudentId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(service.deleteStudentCheck(any())).thenReturn("0");
+
+        controller.doDelete(request, response);
+
+        verify(error, atLeastOnce()).noStudentId(response);
+        verify(service, times(0)).deleteStudent(anyInt());
+    }
+
+    @Test
+    void doDeleteTestError_studentDoesntExist() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1111");
+        when(service.deleteStudentCheck(any())).thenReturn("1");
+
+        controller.doDelete(request, response);
+
+        verify(error, atLeastOnce()).studentDoesntExist(response);
+        verify(service, times(0)).deleteStudent(anyInt());
     }
 }

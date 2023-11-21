@@ -17,5 +17,4 @@ public interface PhoneDtoMapper {
     PhoneOutgoingDto mapToDto(Phone entity);
     Phone mapToEntity(PhoneIncomingDto dto);
     List<PhoneOutgoingDto> mapToDtoList(List<Phone> entities);
-    List<Phone> mapToEntityList(List<PhoneIncomingDto> dtos);
 }

@@ -2,10 +2,8 @@ package org.example.controller;
 
 import com.google.gson.Gson;
 import org.example.controller.responseHandlers.DisciplineErrorResponses;
-import org.example.controller.responseHandlers.TermErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.service.impl.DisciplineServiceImpl;
-import org.example.service.impl.TermServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

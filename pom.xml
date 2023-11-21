@@ -8,6 +8,8 @@
     <artifactId>RestProject</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <packaging>war</packaging>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -63,6 +65,23 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>java/org/example/Main.java</exclude>
+                        <exclude>java/org/example/service/DisciplineService.java</exclude>
+                        <exclude>java/org/example/service/TermService.java</exclude>
+                        <exclude>java/org/example/service/StudentService.java</exclude>
+                        <exclude>java/org/example/service/PhoneService.java</exclude>
+                        <exclude>java/org/example/repository/DisciplineRepo.java</exclude>
+                        <exclude>java/org/example/repository/TermRepo.java</exclude>
+                        <exclude>java/org/example/repository/StudentRepo.java</exclude>
+                        <exclude>java/org/example/repository/PhoneRepo.java</exclude>
+                        <exclude>target/generated-sources/annotations/org/example/controller/mapper/DisciplineDtoMapperImpl.java</exclude>
+                        <exclude>target/generated-sources/annotations/org/example/controller/mapper/PhoneDtoMapperImpl.java</exclude>
+                        <exclude>target/generated-sources/annotations/org/example/controller/mapper/StudentDtoMapperImpl.java</exclude>
+                        <exclude>target/generated-sources/annotations/org/example/controller/mapper/TermDtoMapperImpl.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
         </plugins>

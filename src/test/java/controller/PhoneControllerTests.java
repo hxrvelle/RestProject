@@ -1,8 +1,8 @@
 package controller;
 
 import org.example.controller.PhoneController;
-import org.example.controller.dto.PhoneOutgoingDto;
-import org.example.controller.dto.StudentIncomingDto;
+import org.example.controller.responseHandlers.PhoneErrorResponses;
+import org.example.controller.responseHandlers.StudentErrorResponses;
 import org.example.controller.responseHandlers.general.SuccessResponse;
 import org.example.service.impl.PhoneServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -30,6 +28,10 @@ public class PhoneControllerTests {
     @Mock
     private SuccessResponse success;
     @Mock
+    private PhoneErrorResponses error;
+    @Mock
+    private StudentErrorResponses sError;
+    @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
@@ -41,6 +43,8 @@ public class PhoneControllerTests {
         controller = new PhoneController();
         service = new PhoneServiceImpl();
         success = new SuccessResponse();
+        error = new PhoneErrorResponses();
+        sError = new StudentErrorResponses();
 
         MockitoAnnotations.openMocks(this);
         StringWriter stringWriter = new StringWriter();
@@ -50,7 +54,6 @@ public class PhoneControllerTests {
     @Test
     void doGetStudentPhonesTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
-        when(service.getStudentPhones(1)).thenReturn(new ArrayList<>());
         when(service.getStudentPhonesCheck(any())).thenReturn("3");
         when(response.getWriter()).thenReturn(writer);
 
@@ -58,6 +61,29 @@ public class PhoneControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 200);
         verify(service, atLeastOnce()).getStudentPhones(1);
+    }
+
+    @Test
+    void doGetStudentPhonesTestError_noPhoneNumbers() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1");
+        when(service.getStudentPhonesCheck(any())).thenReturn("2");
+        when(response.getWriter()).thenReturn(writer);
+
+        controller.doGet(request, response);
+
+        verify(error, atLeastOnce()).noPhoneNumbers(response);
+        verify(service, times(0)).getStudentPhones(anyInt());
+    }
+    @Test
+    void doGetStudentPhonesTestError_noStudentId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(service.getStudentPhonesCheck(any())).thenReturn("0");
+        when(response.getWriter()).thenReturn(writer);
+
+        controller.doGet(request, response);
+
+        verify(sError, atLeastOnce()).noStudentId(response);
+        verify(service, times(0)).getStudentPhones(anyInt());
     }
 
     @Test
@@ -74,6 +100,32 @@ public class PhoneControllerTests {
     }
 
     @Test
+    void doPostTestError_noPhone() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1");
+        when(request.getParameter("number")).thenReturn("");
+
+        when(service.addStudentPhoneCheck(any(), anyString())).thenReturn("2");
+
+        controller.doPost(request, response);
+
+        verify(error, atLeastOnce()).noPhone(response);
+        verify(service, times(0)).addStudentPhone(any());
+    }
+
+    @Test
+    void doPostTestError_noStudentId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(request.getParameter("number")).thenReturn("888");
+
+        when(service.addStudentPhoneCheck(any(), anyString())).thenReturn("0");
+
+        controller.doPost(request, response);
+
+        verify(sError, atLeastOnce()).noStudentId(response);
+        verify(service, times(0)).addStudentPhone(any());
+    }
+
+    @Test
     void doPutTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/2");
         when(request.getParameter("number")).thenReturn("888");
@@ -87,6 +139,32 @@ public class PhoneControllerTests {
     }
 
     @Test
+    void doPutTestError_noPhoneId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+        when(request.getParameter("number")).thenReturn("888");
+
+        when(service.updateStudentPhoneCheck(any(), anyString())).thenReturn("3");
+
+        controller.doPut(request, response);
+
+        verify(error, atLeastOnce()).noPhoneId(response);
+        verify(service, times(0)).updateStudentPhone(anyInt(), any());
+    }
+
+    @Test
+    void doPutTestError_noPhone() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1");
+        when(request.getParameter("number")).thenReturn("");
+
+        when(service.updateStudentPhoneCheck(any(), anyString())).thenReturn("1");
+
+        controller.doPut(request, response);
+
+        verify(error, atLeastOnce()).noPhone(response);
+        verify(service, times(0)).updateStudentPhone(anyInt(), any());
+    }
+
+    @Test
     void doDeleteTest() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
 
@@ -96,5 +174,29 @@ public class PhoneControllerTests {
 
         verify(success, atLeastOnce()).successResponse(response, 200);
         verify(service, atLeastOnce()).deleteStudentPhoneCheck(any());
+    }
+
+    @Test
+    void doDeleteTestError_noPhoneId() throws IOException {
+        when(request.getPathInfo()).thenReturn("/");
+
+        when(service.deleteStudentPhoneCheck(any())).thenReturn("0");
+
+        controller.doDelete(request, response);
+
+        verify(error, atLeastOnce()).noPhoneId(response);
+        verify(service, times(0)).deleteStudentPhone(anyInt());
+    }
+
+    @Test
+    void doDeleteTestError_phoneDoesntExist() throws IOException {
+        when(request.getPathInfo()).thenReturn("/1111");
+
+        when(service.deleteStudentPhoneCheck(any())).thenReturn("1");
+
+        controller.doDelete(request, response);
+
+        verify(error, atLeastOnce()).phoneDoesntExist(response);
+        verify(service, times(0)).deleteStudentPhone(anyInt());
     }
 }

@@ -17,5 +17,4 @@ public interface StudentDtoMapper {
     StudentOutgoingDto mapToDto(Student entity);
     Student mapToEntity(StudentIncomingDto dto);
     List<StudentOutgoingDto> mapToDtoList(List<Student> entities);
-    List<Student> mapToEntityList(List<StudentIncomingDto> dtos);
 }
