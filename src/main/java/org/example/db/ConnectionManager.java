@@ -49,54 +49,5 @@ public class ConnectionManager {
 
     public static void voidConnect(Statement statement, String query) throws SQLException {
         statement.execute(query);
-
-    //    private static String url;
-//    private static String username;
-//    private static String password;
-//
-//    private static String getUrl() {
-//        return url;
-//    }
-//
-//    private static String getUsername() {
-//        return username;
-//    }
-//
-//    private static String getPassword() {
-//        return password;
-//    }
-//
-//    public static void setUrl(String url) {
-//        ConnectionManager.url = url;
-//    }
-//
-//    public static void setUsername(String username) {
-//        ConnectionManager.username = username;
-//    }
-//
-//    public static void setPassword(String password) {
-//        ConnectionManager.password = password;
-//    }
-//
-//    public ConnectionManager() {
-//        Properties props = new Properties();
-//        InputStream in = ConnectionManager.class.getClassLoader().getResourceAsStream("db.properties");
-//        try {
-//            props.load(in);
-//            in.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        url = props.getProperty("jdbc.url");
-//        username = props.getProperty("jdbc.username");
-//        password = props.getProperty("jdbc.password");
-//    }
-//
-//    public static Connection connection() throws SQLException, ClassNotFoundException {
-//        Class.forName("com.mysql.cj.jdbc.Driver");
-//        return DriverManager.getConnection(getUrl(), getUsername(), getPassword());
-//    }
-//
     }
 }

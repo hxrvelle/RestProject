@@ -1,7 +1,9 @@
 package service;
 
 import org.example.controller.dto.DisciplineIncomingDto;
+import org.example.controller.dto.TermOutgoingDto;
 import org.example.model.Discipline;
+import org.example.model.Term;
 import org.example.repository.impl.DisciplineRepoImpl;
 import org.example.service.impl.DisciplineServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +13,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class DisciplineServiceTests {
@@ -81,5 +86,112 @@ public class DisciplineServiceTests {
 
         doNothing().when(disciplineRepo).deleteDiscipline(anyInt());
         verify(disciplineRepo, atLeastOnce()).deleteDiscipline(anyInt());
+    }
+
+    //Check methods
+
+    @Test
+    void testGetDisciplinesCheckNonExistingId() {
+        int id = 1;
+        String[] path = {"", String.valueOf(id)};
+
+        when(disciplineRepo.getDisciplineById(id)).thenReturn(new Discipline());
+
+        String result = disciplineService.getDisciplinesCheck(path);
+
+        assertEquals("00", result);
+        verify(disciplineRepo, times(1)).getDisciplineById(id);
+    }
+
+    @Test
+    void testCreateDisciplineCheckNullName() {
+        String result = disciplineService.createDisciplineCheck(null);
+
+        assertEquals("0", result);
+        verifyNoInteractions(disciplineRepo);
+    }
+
+    @Test
+    void testCreateDisciplineCheckEmptyName() {
+        String result = disciplineService.createDisciplineCheck("");
+
+        assertEquals("0", result);
+        verifyNoInteractions(disciplineRepo);
+    }
+
+    @Test
+    void testCreateDisciplineCheckValidName() {
+        String disciplineName = "Mathematics";
+
+        String result = disciplineService.createDisciplineCheck(disciplineName);
+
+        assertEquals("1", result);
+        verify(disciplineRepo, times(1)).createDiscipline(any(Discipline.class));
+    }
+
+    @Test
+    void testModifyDisciplineCheckInvalidPathLength() {
+        String[] path = {"", "1", "2"};
+
+        String result = disciplineService.modifyDisciplineCheck(path, "Mathematics");
+
+        assertEquals("0", result);
+        verifyNoInteractions(disciplineRepo);
+    }
+
+    @Test
+    void testModifyDisciplineCheckNonExistingId() {
+        int id = 1;
+        String[] path = {"", String.valueOf(id)};
+
+        when(disciplineRepo.getDisciplineById(id)).thenReturn(new Discipline());
+
+        String result = disciplineService.modifyDisciplineCheck(path, "Mathematics");
+
+        assertEquals("1", result);
+        verify(disciplineRepo, times(1)).getDisciplineById(id);
+    }
+
+    @Test
+    void testDeleteDisciplineCheckPathLengthLessThanOne() {
+        String[] path = {};
+
+        String result = disciplineService.deleteDisciplineCheck(path);
+
+        assertEquals("0", result);
+        verifyNoInteractions(disciplineRepo);
+    }
+
+    @Test
+    void testDeleteDisciplineCheckInvalidPathLength() {
+        String[] path = {"", "1", "2"};
+
+        String result = disciplineService.deleteDisciplineCheck(path);
+
+        assertEquals("3", result);
+        verifyNoInteractions(disciplineRepo);
+    }
+
+    @Test
+    void testDeleteDisciplineCheckInvalidId() {
+        String[] path = {"", "abc"};
+
+        String result = disciplineService.deleteDisciplineCheck(path);
+
+        assertEquals("3", result);
+        verifyNoInteractions(disciplineRepo);
+    }
+
+    @Test
+    void testDeleteDisciplineCheckNonExistingId() {
+        int id = 1;
+        String[] path = {"", String.valueOf(id)};
+
+        when(disciplineRepo.getDisciplineById(id)).thenReturn(new Discipline());
+
+        String result = disciplineService.deleteDisciplineCheck(path);
+
+        assertEquals("1", result);
+        verify(disciplineRepo, times(1)).getDisciplineById(id);
     }
 }

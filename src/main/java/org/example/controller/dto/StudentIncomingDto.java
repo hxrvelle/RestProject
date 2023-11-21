@@ -2,6 +2,7 @@ package org.example.controller.dto;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class StudentIncomingDto {
     private String surname;
@@ -69,6 +70,32 @@ public class StudentIncomingDto {
 
     public void setPhoneNumbers(ArrayList<PhoneIncomingDto> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StudentIncomingDto that = (StudentIncomingDto) o;
+
+        if (status != that.status) return false;
+        if (!Objects.equals(surname, that.surname)) return false;
+        if (!Objects.equals(name, that.name)) return false;
+        if (!Objects.equals(group, that.group)) return false;
+        if (!Objects.equals(date, that.date)) return false;
+        return Objects.equals(phoneNumbers, that.phoneNumbers);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = surname != null ? surname.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (group != null ? group.hashCode() : 0);
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + status;
+        result = 31 * result + (phoneNumbers != null ? phoneNumbers.hashCode() : 0);
+        return result;
     }
 
     @Override
